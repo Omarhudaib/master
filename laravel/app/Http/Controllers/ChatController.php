@@ -10,16 +10,9 @@ class ChatController extends Controller
 
     public function index()
     {
-        // Fetch all employees
         $employees = Employee::all();
-
-        // Fetch all messages (or you can filter them based on a specific condition)
-        $messages = Message::all(); // Adjust the query based on your needs
-
-        // Pass both variables to the view
-        return view('admin.chat', compact('employees', 'messages'));
+        return view('admin.chat', compact('employees'));
     }
-
 
     public function show($employeeId)
     {
