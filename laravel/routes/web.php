@@ -49,7 +49,7 @@ Route::get('/ticket_list', [EmployeeController::class, 'ticketEmployee'])->name(
 // web.php
  // Make sure this import is correct
 
-Route::patch('/ticket_list/{id}/status', [EmployeeController::class, 'updateStatus'])->name('update');
+Route::patch('/ticket_list/{id}/status', [EmployeeController::class, 'updateStatus'])->name('update-status');
 
 // web.php
 
