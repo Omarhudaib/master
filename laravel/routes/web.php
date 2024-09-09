@@ -1,11 +1,11 @@
 <?php
-
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,7 +45,8 @@ Route::post('/day-action', [EmployeeController::class, 'handleDayAction'])->name
 
 Route::get('/employee', [EmployeeController::class, 'indexEmployee'])->name('employee');
 Route::get('/ticket_list', [EmployeeController::class, 'ticketEmployee'])->name('ticket_list');
-
+Route::get('/',function() {
+    return view('home');});
 // web.php
  // Make sure this import is correct
 
@@ -66,14 +67,6 @@ Route::put('employee_p/{id}', [EmployeeController::class, 'update'])->name('empl
 
 
 
-
-
-
-
-
-
-use App\Http\Controllers\ChatController;
-
 Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 
 Route::get('/chat/{user}', [ChatController::class, 'show'])->name('chat.show');
@@ -85,7 +78,15 @@ Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
 
 
 
-use App\Http\Controllers\AdminController;
+
+
+
+
+
+
+
+
+
 
 
 
