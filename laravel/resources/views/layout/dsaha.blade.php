@@ -314,7 +314,7 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('chat.index') }}" aria-expanded="false">
+                            <a class="sidebar-link" href="{{ route('chat.index', ['employeeId' => auth()->user()->employee->id]) }}" aria-expanded="false">
                                 <i class="fas fa-briefcase"></i> <!-- Icon for Positions -->
                                 <span class="hide-menu">chat</span>
                             </a>

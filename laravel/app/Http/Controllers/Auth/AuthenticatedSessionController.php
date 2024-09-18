@@ -19,22 +19,30 @@ class AuthenticatedSessionController extends Controller
     {
         return view('auth.login');
     }
-
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
-    {
-        $request->authenticate();
+{
+    $request->authenticate();
+    $request->session()->regenerate();
 
-        $request->session()->regenerate();
+    // Get the authenticated user
+    $user = Auth::user();
 
-        return redirect()->intended('/employee');
+    // Check the user's role and redirect accordingly
+    if ($user->role_id == 1) {
+        return redirect()->route('employee'); // Redirect to employee dashboard
+    } elseif ($user->role_id == 2) {
+        return redirect()->route('admin.index'); // Redirect to admin dashboard
+    } elseif ($user->role_id == 3) {
+        return redirect()->route('employeesh'); // Redirect to HR dashboard
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
+    // Default redirection if no specific role match
+    return redirect()->route('home');
+}
+
+
+
+
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();

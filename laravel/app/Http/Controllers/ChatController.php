@@ -8,10 +8,24 @@ use App\Models\Employee;
 class ChatController extends Controller
 {
 
-    public function index()
+    public function index($employeeId)
     {
         $employees = Employee::all();
-        return view('admin.chat', compact('employees'));
+        $employee = Employee::findOrFail($employeeId);
+        $senderId = auth()->user()->employee->id;
+        $messages = Message::where(function ($query) use ($senderId, $employeeId) {
+            $query->where('sender_id', $senderId)
+                  ->where('receiver_id', $employeeId);
+        })
+        ->orWhere(function ($query) use ($senderId, $employeeId) {
+            $query->where('sender_id', $employeeId)
+                  ->where('receiver_id', $senderId);
+        })
+        ->latest()
+        ->take(10)
+        ->get()
+        ->reverse();
+        return view('admin.chat', compact('employee', 'employees', 'messages'));
     }
 
     public function show($employeeId)

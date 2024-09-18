@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -60,4 +61,26 @@ class Employee extends Model
         return $this->hasMany(EmployeeRelation::class, 'related_employee_id');
     }
     // Remove redundant or incorrect method
+     // Relationships
+     public function dailyInOut()
+     {
+         return $this->hasMany(DailyInOut::class);
+     }
+
+     // Optionally, you can have a method to check if the employee is on an off day
+     public function isOnOffDay()
+     {
+         $today = Carbon::today();
+
+         // Check if the employee has a leave or off day today (adjust according to your schema)
+         return $this->leaves()->whereDate('start_date', '<=', $today)
+                               ->whereDate('end_date', '>=', $today)
+                               ->exists();
+     }
+
+     // Relationship to the leaves/off-days table
+     public function leaves()
+     {
+         return $this->hasMany(Leave::class); // Assuming Leave model exists
+     }
 }

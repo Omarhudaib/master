@@ -1,11 +1,12 @@
 <?php
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HrController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,6 +24,15 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('store');
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+// Admin route
+
+
+// Employee route
+Route::get('/employee', [EmployeeController::class, 'index'])->name('employee');
+
+// HR route
+Route::get('/hr', [HrController::class, 'index'])->name('employeesh'); // Or whatever route name you need
+Route::get('/attendance', [HrController::class, 'indexa'])->name('attendance.indexx');
 
 
 Route::get('/dashboard', function () {
@@ -66,8 +76,8 @@ Route::put('employee_p/{id}', [EmployeeController::class, 'update'])->name('empl
 
 
 
+Route::get('/chat/{employeeId}', [ChatController::class, 'index'])->name('chat.index');
 
-Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 
 Route::get('/chat/{user}', [ChatController::class, 'show'])->name('chat.show');
 Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
@@ -91,7 +101,6 @@ Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
 
 
 Route::get('/employees', [AdminController::class, 'showall'])->name('employees');
-Route::get('/admin', [AdminController::class, 'index'])->name('admin');
 Route::get('/employees_add', [AdminController::class, 'showemployee'])->name('employees_add');
 
 Route::get('/employees/{id}', [AdminController::class, 'show'])->name('employees.show');
@@ -220,3 +229,18 @@ Route::get('/tickets/{ticket}/edit', [AdminController::class, 'editTicket'])->na
 Route::put('/tickets/{ticket}', [AdminController::class, 'updateTicket'])->name('tickets.update');
 Route::delete('/tickets/{ticket}', [AdminController::class, 'destroyTicket'])->name('tickets.destroy');
 
+
+
+
+
+//hr
+
+Route::get('/home_hr', [HrController::class, 'index'])->name('employeesh');
+Route::get('/employeesh', [HrController::class, 'showall'])->name('employeesh');
+Route::get('/employees_addh', [HrController::class, 'showemployee'])->name('employees_addh');
+
+Route::get('/employeesh/{id}', [HrController::class, 'show'])->name('employeesh.show');
+Route::get('/employeesh/{id}/edit', [HrController::class, 'edit'])->name('employeesh.edit');
+Route::post('/employeesh', [HrController::class, 'store'])->name('employeesh.store');
+Route::put('/employeesh/{id}', [HrController::class, 'update'])->name('employeesh.update');
+Route::delete('/employeesh/{id}', [HrController::class, 'destroy'])->name('employeesh.destroy');
