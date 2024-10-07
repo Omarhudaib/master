@@ -254,7 +254,7 @@
                         <li class="nav-small-cap"><span class="hide-menu">Applications</span></li>
 
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ url('employees') }}" aria-expanded="false">
+                            <a class="sidebar-link" href="{{ route('employees') }}" aria-expanded="false">
                                 <i class="fas fa-child"></i>
                                 <span class="hide-menu">Employees</span>
                             </a>

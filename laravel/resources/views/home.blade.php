@@ -21,12 +21,22 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
             <!-- Dark Logo -->
             <img src="{{ asset('assets/images/logo-icon.png') }}" alt="homepage" class="dark-logo">
             <!-- Light Logo -->
-            <img src="{{ asset('assets/images/logo-icon.png') }}" alt="homepage" class="light-logo">
         </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('login') }}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('career') }}">Career</a> <!-- New Career Link -->
+                </li>
+                <!-- Add other navigation items as needed -->
+            </ul>
+        </div>
     </nav>
 
     <div class="page ">

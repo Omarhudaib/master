@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
     }
 
     // Default redirection if no specific role match
-    return redirect()->route('home');
+    return redirect()->route('career');
 }
 
 

@@ -1,6 +1,6 @@
 
 
-@include('layout.dsaha')
+@include('layout.dsahh')
 <div class="page-wrapper">
     <!-- ============================================================== -->
     <!-- Bread crumb and right sidebar toggle -->
@@ -9,7 +9,7 @@
         <div class="row">
             <h2>Edit Employee</h2>
             <div class="table-responsive">
-                <form action="{{ route('employees.update', $employee->id) }}" method="POST">
+                <form action="{{ route('employeesh.update', $employee->id) }}" method="POST">
                     @csrf
                     @method('PUT') {{-- Specify the HTTP method as PUT for updating --}}
 
@@ -220,10 +220,97 @@
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
-                    
+                    <div class="form-group">
+                        <label for="national_id">National ID:</label>
+                        <input
+                            type="text"
+                            name="national_id"
+                            id="national_id"
+                            class="form-control @error('national_id') is-invalid @enderror"
+                            value="{{ old('national_id', $employee->national_id) }}"
+                            required
+                        >
+                        @error('national_id')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="marital_status">Marital Status:</label>
+                        <select
+                            name="marital_status"
+                            id="marital_status"
+                            class="form-control @error('marital_status') is-invalid @enderror"
+                            required
+
+                            <option value="">-- Select Marital Status --</option>
+                            <option value="single" {{ old('marital_status', $employee->marital_status) == 'single' ? 'selected' : '' }}>Single</option>
+                            <option value="married" {{ old('marital_status', $employee->marital_status) == 'married' ? 'selected' : '' }}>Married</option>
+                        </select>
+                        @error('marital_status')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number:</label>
+                        <input
+                            type="text"
+                            name="phone_number"
+                            id="phone_number"
+                            class="form-control @error('phone_number') is-invalid @enderror"
+                            value="{{ old('phone_number', $employee->phone_number) }}"
+                            required
+                        >
+                        @error('phone_number')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="employee_identifier">Employee Identifier:</label>
+                        <input
+                            type="text"
+                            name="employee_identifier"
+                            id="employee_identifier"
+                            class="form-control @error('employee_identifier') is-invalid @enderror"
+                            value="{{ old('employee_identifier', $employee->employee_identifier) }}"
+                        >
+                        @error('employee_identifier')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sick_leaves">Sick Leaves:</label>
+                        <input
+                            type="number"
+                            name="sick_leaves"
+                            id="sick_leaves"
+                            class="form-control @error('sick_leaves') is-invalid @enderror"
+                            value="{{ old('sick_leaves', $employee->sick_leaves) }}"
+                        >
+                        @error('sick_leaves')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="annual_vacation_days">Annual Vacation Days:</label>
+                        <input
+                            type="number"
+                            name="annual_vacation_days"
+                            id="annual_vacation_days"
+                            class="form-control @error('annual_vacation_days') is-invalid @enderror"
+                            value="{{ old('annual_vacation_days', $employee->annual_vacation_days) }}"
+                        >
+                        @error('annual_vacation_days')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
 
                     <button type="submit" class="btn btn-primary">Update Employee</button>
-                    <a href="{{ route('employees') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ route('employeesh') }}" class="btn btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>

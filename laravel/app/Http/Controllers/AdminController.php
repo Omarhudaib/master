@@ -100,7 +100,7 @@ public function updateStatusreq(Request $request, $id)
     $dailyInOuts = DailyInOut::paginate(20);
  $teams = Team::with(['leader', 'projects', 'employees'])->get();
 
- $employeeId = auth()->user()->employee->id;
+ $employeeId = auth()->user()->id;
 
     $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
                                 ->orderBy('check_in', 'desc')

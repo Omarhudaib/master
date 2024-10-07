@@ -32,12 +32,9 @@ Route::get('/employee', [EmployeeController::class, 'index'])->name('employee');
 
 // HR route
 Route::get('/hr', [HrController::class, 'index'])->name('employeesh'); // Or whatever route name you need
-Route::get('/attendance', [HrController::class, 'indexa'])->name('attendance.indexx');
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -240,7 +237,104 @@ Route::get('/employeesh', [HrController::class, 'showall'])->name('employeesh');
 Route::get('/employees_addh', [HrController::class, 'showemployee'])->name('employees_addh');
 
 Route::get('/employeesh/{id}', [HrController::class, 'show'])->name('employeesh.show');
-Route::get('/employeesh/{id}/edit', [HrController::class, 'edit'])->name('employeesh.edit');
+Route::get('/employeesh/{id}/edit', [HrController::class, 'edith'])->name('employeesh.edit');
 Route::post('/employeesh', [HrController::class, 'store'])->name('employeesh.store');
 Route::put('/employeesh/{id}', [HrController::class, 'update'])->name('employeesh.update');
 Route::delete('/employeesh/{id}', [HrController::class, 'destroy'])->name('employeesh.destroy');
+
+
+
+
+Route::get('/departments', [HrController::class, 'indexDepartment'])->name('departmentsh');
+Route::post('/departments', [HrController::class, 'createDepartment'])->name('departments.create');
+
+
+
+Route::prefix('positions')->group(function () {
+    Route::get('/', [HrController::class, 'indexPosition'])->name('positionsh.index');
+    Route::get('/create', [HrController::class, 'createPosition'])->name('positionsh.create');
+    Route::post('/', [HrController::class, 'storePosition'])->name('positionsh.store');
+    Route::get('/{position}', [HrController::class, 'showPosition'])->name('positionsh.show');
+    Route::get('/{position}/edit', [HrController::class, 'editPosition'])->name('positionsh.edit');
+    Route::put('/{position}', [HrController::class, 'updatePosition'])->name('positionsh.update');
+    Route::delete('/{position}', [HrController::class, 'destroyPosition'])->name('positionsh.destroy');
+});
+
+
+
+
+
+
+Route::get('/chat/{employeeId}', [HrController::class, 'indexm'])->name('chath.index');
+
+
+Route::get('/chat/{user}', [HrController::class, 'showm'])->name('chath.show');
+Route::post('/chat/send', [HrController::class, 'send'])->name('chath.send');
+
+Route::get('/meetings', [HrController::class, 'indexMeeting'])->name('meetingsh.index');
+
+
+
+
+// Display requests
+Route::get('/requests', [HrController::class, 'indexreq'])->name('requestsh.index');
+
+// Update request status
+Route::post('/requests/{request}/update', [HrController::class, 'updateStatusreq'])->name('requestsh.updateStatus');
+
+// Delete request
+Route::delete('/requests/{request}', [HrController::class, 'destroyreq'])->name('requestsh.destroy');
+// Team Routes
+Route::get('teams', [HrController::class, 'indexteams'])->name('teamsh.index');
+Route::get('teams/create', [HrController::class, 'createteams'])->name('teamsh.create');
+Route::post('teams', [HrController::class, 'storeteams'])->name('teamsh.store');
+Route::get('teams/{team}', [HrController::class, 'showteams'])->name('teamsh.show');
+Route::get('teams/{team}/edit', [HrController::class, 'editteams'])->name('teamsh.edit');
+Route::put('teams/{team}', [HrController::class, 'updateteams'])->name('teamsh.update');
+Route::delete('teams/{team}', [HrController::class, 'destroyteams'])->name('teamsh.destroy');
+
+// Add Employees to a Team
+Route::post('/teams/add-employees', [HrController::class, 'addEmployees'])->name('teamsh.addEmployees');
+
+// Remove Employee from a Team
+Route::delete('teams/{team}/employees/{employee}', [HrController::class, 'removeEmployee'])->name('teamsh.removeEmployee');
+
+// Get Employees by Team
+Route::get('teams/{team}/employees', [HrController::class, 'getEmployeesByTeam'])->name('teamsh.getTeamEmployees');
+// Remove Employee from a Team
+Route::delete('teams/{team}/employees/{employee}', [HrController::class, 'removeEmployee'])->name('teamsh.removeEmployee');
+
+
+Route::get('/task', [HrController::class, 'showTask'])->name('tasksh.index');
+
+Route::put('/tasks/{task}/updateStatus', [HrController::class, 'updateStatus'])->name('tasksh.updateStatus');
+Route::post('/requests/{request}/update', [HrController::class, 'updateStatusreq'])->name('requestsh.updateStatus');
+
+
+Route::get('/report', [HrController::class, 'report'])->name('reporth');
+
+Route::get('/attendance', [HrController::class, 'indexa'])->name('attendance.indexx');
+Route::get('/attendance/edit/{id}', [HrController::class, 'editat'])->name('attendance.edit');
+Route::post('/attendance/update/{id}', [HrController::class, 'updateat'])->name('attendance.update');
+
+
+Route::post('/start-work-day', [EmployeeController::class, 'startWorkDay'])->name('start-work-day');
+Route::put('/leave-requests/{id}/update-status', [HrController::class, 'updateStatusr'])->name('leave_request_update_status');
+
+Route::get('hr/leave_requests', [HrController::class, 'indexr'])->name('hr.leave_requestsi');
+Route::get('hr/leave_requests/create', [HrController::class, 'creater'])->name('leave_requestsc');
+Route::post('hr/leave_requests', [HrController::class, 'storer'])->name('leave_requestss');
+Route::get('hr/leave_requests/{leaveRequest}/edit', [HrController::class, 'editr'])->name('leave_requestse');
+Route::put('hr/leave_requests/{leaveRequest}', [HrController::class, 'updater'])->name('leave_requestsu');
+
+
+Route::delete('hr/leave_requests/{leaveRequest}', [HrController::class, 'destroyr'])->name('leave_requestsd');
+
+// In routes/web.php
+Route::get('/job-requests', [HrController::class, 'JobRequest'])->name('job.requests.index');
+
+use App\Http\Controllers\JobOfferController;
+
+Route::resource('job_offers', JobOfferController::class);
+Route::get('/career', [JobOfferController::class, 'show'])->name('career');
+Route::post('/job/{id}/apply', [JobOfferController::class, 'apply'])->name('job.apply');

@@ -109,7 +109,7 @@
 
         <!-- Leave Requests Data -->
         <h2>Leave Requests</h2>
-        <div class="table-responsive">
+        <!--    <div class="table-responsive">
             <table class="table table-hover table-danger">
                 <thead class="bg-danger text-white">
                     <tr>
@@ -137,14 +137,14 @@
                 </tbody>
             </table>
         </div>
-
+    -->
         <script>
             document.querySelectorAll('.clickable-row').forEach(row => {
                 row.addEventListener('click', function() {
                     this.querySelector('form').submit();
                 });
             });
-  
+
             function submitForm(action) {
                 document.getElementById('action').value = action;
                 document.getElementById('day-action-form').submit();
