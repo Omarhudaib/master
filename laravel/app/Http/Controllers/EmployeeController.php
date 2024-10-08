@@ -173,6 +173,29 @@ public function updateStatusti(Request $request, $id)
     return redirect()->back()->with('success', 'Ticket status updated successfully.');
 }
 
+ // Store a newly created leave request in the database
+ public function storer(Request $request)
+ {
+     $validatedData = $request->validate([
+         'employee_id' => 'required|exists:employees,id',
+         'leave_type' => 'required|in:Sick,Vacation,Maternity,Paternity,Unpaid',
+         'start_date' => 'required|date',
+         'end_date' => 'nullable|date|after_or_equal:start_date',
+         'status' => 'required|in:Pending,Approved,Rejected',
+     ]);
+
+     LeaveRequest::create($validatedData);
+
+     return redirect()->route('hr.leave_requestsi')->with('success', 'Leave request created successfully.');
+ }
+
+
+ public function indexre()
+ {
+
+     return view('employee.leave_requestsc ');
+ }
+
 
 
 public function indexe($employeeId)
@@ -192,7 +215,7 @@ public function indexe($employeeId)
     ->take(10)
     ->get()
     ->reverse();
-    return view('employee.chat', compact('employee', 'employees', 'messages'));
+    return view('employee.chate', compact('employee', 'employees', 'messages'));
 }
 public function showe($employeeId)
 {

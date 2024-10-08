@@ -51,6 +51,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/'); // Correct way to redirect to the homepage
     }
 }

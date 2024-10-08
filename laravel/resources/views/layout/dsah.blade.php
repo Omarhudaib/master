@@ -215,12 +215,17 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('chate.index', ['employeeId'=> auth()->id()])}}" aria-expanded="false">
+                            <a class="sidebar-link" href="{{ route('chate.index', ['employeeId' => auth()->user()->employee->id]) }}" aria-expanded="false">
                                 <i class="fas fa-comment-dots"></i> <!-- Changed to a different chat icon -->
                                 <span class="hide-menu">Chat</span>
                             </a>
                         </li>
-
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('leave_requests_index') }}" aria-expanded="false">
+                                <i class="fas fa-comment-dots"></i> <!-- Changed to a different chat icon -->
+                                <span class="hide-menu">Chat</span>
+                            </a>
+                        </li>
 
                         <li class="list-divider"></li>
 

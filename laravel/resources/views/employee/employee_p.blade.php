@@ -56,12 +56,12 @@
 
             <div class="form-group">
                 <label for="department_id">Department (Read Only)</label>
-                <input type="text" id="department_id" class="form-control" value="{{ $employee->department->name }}" disabled>
+                <input type="text" id="department_id" class="form-control" value="{{ $employee->department }}" disabled>
             </div>
 
             <div class="form-group">
                 <label for="position_id">Position (Read Only)</label>
-                <input type="text" id="position_id" class="form-control" value="{{ $employee->position->name }}" disabled>
+                <input type="text" id="position_id" class="form-control" value="{{ $employee->position }}" disabled>
             </div>
 
             <div class="form-group">

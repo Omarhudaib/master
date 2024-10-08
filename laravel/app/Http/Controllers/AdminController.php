@@ -100,7 +100,7 @@ public function updateStatusreq(Request $request, $id)
     $dailyInOuts = DailyInOut::paginate(20);
  $teams = Team::with(['leader', 'projects', 'employees'])->get();
 
- $employeeId = auth()->user()->id;
+ $employeeId = auth()->user()->employee->id;
 
     $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
                                 ->orderBy('check_in', 'desc')
@@ -109,6 +109,8 @@ public function updateStatusreq(Request $request, $id)
     // Determine if the user can check in or check out
     $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
     $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
+
+
 
 
 

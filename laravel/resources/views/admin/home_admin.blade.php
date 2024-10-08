@@ -1,24 +1,26 @@
 @include('layout.dsaha')
-
-
-
 <div class="page-wrapper">
-    <!-- ============================================================== -->
-    <!-- Bread crumb and right sidebar toggle -->
-    <!-- ============================================================== -->
-    <div class="page-breadcrumb">
-        <!-- Blade view for the employee dashboard or wherever you want to place the button -->
-<form action="{{ route('daily_in_out.checkIn') }}" method="POST">
-    @csrf
-    <button type="submit" class="btn btn-primary" id="checkInButton" {{ $canCheckIn ? '' : 'disabled' }}>Check In</button>
-</form>
 
-@if($canCheckOut)
-    <form action="{{ route('daily_in_out.checkOut') }}" method="POST" style="margin-top: 10px;">
+<div class="page-breadcrumb">
+    <!-- Check if the user hasn't checked in yet -->
+    @if($canCheckIn)
+        <div class="alert alert-warning text-center">
+            You haven't checked in yet. Please check in to start your day.
+        </div>
+    @endif
+
+    <!-- Blade view for the employee dashboard or wherever you want to place the button -->
+    <form action="{{ route('daily_in_out.checkIn') }}" method="POST">
         @csrf
-        <button type="submit" class="btn btn-danger" id="checkOutButton">Check Out</button>
+        <button type="submit" class="btn btn-primary" id="checkInButton" {{ $canCheckIn ? '' : 'disabled' }}>Check In</button>
     </form>
-@endif
+
+    @if($canCheckOut)
+        <form action="{{ route('daily_in_out.checkOut') }}" method="POST" style="margin-top: 10px;">
+            @csrf
+            <button type="submit" class="btn btn-danger" id="checkOutButton">Check Out</button>
+        </form>
+    @endif
 
         <div class="row">
     <h2>Employees</h2>
