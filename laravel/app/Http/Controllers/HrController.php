@@ -202,7 +202,7 @@ public function update(Request $request, $id)
         'team_id' => 'nullable|exists:teams,id',
         'salary' => 'nullable|numeric',
         'date_of_birth' => 'nullable|date',
-        'hire_date' => 'nullable|date',
+       'hire_ date' => 'nullable|date',
         'national_id' => 'nullable|string|max:255',
         'marital_status' => 'nullable|in:single,married',
         'phone_number' => 'nullable|string|max:20',

@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,6 +51,11 @@ require __DIR__.'/auth.php';
 Route::post('/day-action', [EmployeeController::class, 'handleDayAction'])->name('day-action');
 
 
+Route::get('chate/{employeeId}', [EmployeeController::class, 'indexe'])->name('chate.index');
+
+
+Route::get('chate/{user}', [EmployeeController::class, 'showe'])->name('chate.show');
+Route::post('chate/send', [EmployeeController::class, 'sende'])->name('chate.send');
 
 Route::get('/employee', [EmployeeController::class, 'indexEmployee'])->name('employee');
 Route::get('/ticket_list', [EmployeeController::class, 'ticketEmployee'])->name('ticket_list');
@@ -56,8 +63,12 @@ Route::get('/',function() {
     return view('home');});
 // web.php
  // Make sure this import is correct
+// Route for updating task status
+Route::patch('/tasks/{id}/update', [EmployeeController::class, 'updateStatusta'])->name('updateTask');
 
-Route::patch('/ticket_list/{id}/status', [EmployeeController::class, 'updateStatus'])->name('update-status');
+// Route for updating ticket status
+Route::patch('/tickets/{id}/update', [EmployeeController::class, 'updateStatusti'])->name('updateTicket');
+
 
 // web.php
 
@@ -73,12 +84,11 @@ Route::put('employee_p/{id}', [EmployeeController::class, 'update'])->name('empl
 
 
 
-Route::get('/chat/{employeeId}', [ChatController::class, 'index'])->name('chat.index');
+//::get('/chat/{employeeId}', [ChatController::class, 'index'])->name('chat.index');
 
 
-Route::get('/chat/{user}', [ChatController::class, 'show'])->name('chat.show');
-Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
-
+//::get('/chat/{user}', [ChatController::class, 'show'])->name('chat.show');
+//Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
 
 
 
@@ -338,3 +348,6 @@ use App\Http\Controllers\JobOfferController;
 Route::resource('job_offers', JobOfferController::class);
 Route::get('/career', [JobOfferController::class, 'show'])->name('career');
 Route::post('/job/{id}/apply', [JobOfferController::class, 'apply'])->name('job.apply');
+
+
+

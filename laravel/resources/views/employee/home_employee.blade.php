@@ -1,176 +1,186 @@
+
+Copy code
 @include('layout.dsah')
 
 <div class="page-wrapper">
-    <!-- Employee Data -->
-    <div class="container-fluid">
-        <h2>Employees</h2>
+    <div class="page-breadcrumb">
+        <!-- Check if the user hasn't checked in yet -->
+        @if($canCheckIn)
+            <div class="alert alert-warning text-center">
+                You haven't checked in yet. Please check in to start your day.
+            </div>
+        @endif
 
+        <!-- Blade view for the employee dashboard or wherever you want to place the button -->
+        <form action="{{ route('daily_in_out.checkIn') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-primary" id="checkInButton" {{ $canCheckIn ? '' : 'disabled' }}>Check In</button>
+        </form>
 
-        <!-- Departments Data -->
-        <h2> {{ $departments }}</h2>
-
-        <div class="text-center mt-4">
-            <form id="day-action-form" action="{{ route('day-action') }}" method="POST">
+        @if($canCheckOut)
+            <form action="{{ route('daily_in_out.checkOut') }}" method="POST" style="margin-top: 10px;">
                 @csrf
-                <button type="button" class="btn btn-primary" onclick="submitForm('start')">Start My Day</button>
-                <button type="button" class="btn btn-secondary" onclick="submitForm('end')">End My Day</button>
-                <input type="hidden" name="action" id="action">
+                <button type="submit" class="btn btn-danger" id="checkOutButton">Check Out</button>
             </form>
+        @endif
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Ticket Metrics -->
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card card-hover">
+                                    <div class="p-2 bg-primary text-center">
+                                        <h1 class="font-light text-white">{{ $tickets->count() }}</h1>
+                                        <h6 class="text-white">Total Tickets</h6>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card card-hover">
+                                    <div class="p-2 bg-cyan text-center">
+                                        <h1 class="font-light text-white">{{ $responded }}</h1>
+                                        <h6 class="text-white">Responded</h6>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card card-hover">
+                                    <div class="p-2 bg-success text-center">
+                                        <h1 class="font-light text-white">{{ $resolved }}</h1>
+                                        <h6 class="text-white">Resolved</h6>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card card-hover">
+                                    <div class="p-2 bg-danger text-center">
+                                        <h1 class="font-light text-white">{{ $pending }}</h1>
+                                        <h6 class="text-white">Pending</h6>
+                                    </div>
+                                </div>
+                            </div>
+                       </div>
+
+
+                        <!-- Task Status Summary -->
+                        <div class="row mt-4">
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card card-hover">
+                                    <div class="p-2 bg-warning text-center">
+                                        <h1 class="font-light text-white">{{ $pendingTasks }}</h1>
+                                        <h6 class="text-white">Pending Tasks</h6>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card card-hover">
+                                    <div class="p-2 bg-info text-center">
+                                        <h1 class="font-light text-white">{{ $inProgressTasks }}</h1>
+                                        <h6 class="text-white">In Progress Tasks</h6>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card card-hover">
+                                    <div class="p-2 bg-success text-center">
+                                        <h1 class="font-light text-white">{{ $completedTasks }}</h1>
+                                        <h6 class="text-white">Completed Tasks</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table id="zero_config" class="table table-striped table-bordered no-wrap">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Team Number</th>
+                                                            <th>Team Name</th>
+                                                            <th>Team Leader</th>
+                                                            <th>Employee Name</th>
+                                                            <th>Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($teams as $team)
+                                                            <tr>
+                                                                <td rowspan="{{ $team->employees->count() }}">{{ $team->id }}</td>
+                                                                <td rowspan="{{ $team->employees->count() }}">{{ $team->name }}</td>
+                                                                <td rowspan="{{ $team->employees->count() }}">{{ $team->teamLeader->name ?? 'No Leader' }}</td>
+
+                                                                <!-- Loop through employees in the same team -->
+                                                                @foreach($team->employees as $index => $employee)
+                                                                    @if($index == 0)
+                                                                        <td>{{ $employee->name }}</td>
+                                                                        <td>{{ $employee->pivot->created_at }}</td>
+                                                                    </tr>
+                                                                    @else
+                                                                    <tr>
+                                                                        <td>{{ $employee->name }}</td>
+                                                                        <td>{{ $employee->pivot->created_at }}</td>
+                                                                    </tr>
+                                                                    @endif
+                                                                @endforeach
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Department</th>
-                        <th>Position</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($employees as $employee)
-                    <tr>
-                        <td>{{ $employee->name }}</td>
-                        <td>{{ $employee->email }}</td>
-                        <td>{{ $employee->department->name ?? 'N/A' }}</td>
-                        <td>{{ $employee->position->title ?? 'N/A' }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Tasks Data -->
-        <h2>Tasks</h2>
-        <div class="table-responsive">
-            <table class="table table-hover table-danger">
-                <thead class="bg-danger text-white">
-                    <tr>
-                        <th>Employee</th>
-                        <th>Project</th>
-                        <th>Team</th>
-                        <th>Status</th>
-                        <th>Weeks</th>
-                        <th>Budget</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($tasks as $task)
-                    <tr>
-                        <td>{{ $task->employee->name ?? 'Unknown' }}</td>
-                        <td>{{ $task->project->name ?? 'N/A' }}</td>
-                        <td>{{ $task->team->name ?? 'N/A' }}</td>
-                        <td>
-                            <form action="{{ route('update-status', $task->id) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
-                                    <option value="In Progress" {{ $task->status === 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                    <option value="Completed" {{ $task->status === 'Completed' ? 'selected' : '' }}>Completed</option>
-                                    <option value="On Hold" {{ $task->status === 'On Hold' ? 'selected' : '' }}>On Hold</option>
-                                </select>
-                            </form>
-                        </td>
-                        <td>{{ $task->weeks }}</td>
-                        <td>${{ $task->budget }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-
-
-
-
-
-
-
-        <!-- Positions Data -->
-        <h2>Positions</h2>
-        <div class="table-responsive">
-            <table class="table table-hover table-warning">
-                <thead class="bg-warning text-white">
-                    <tr>
-                        <th>Title</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($positions as $position)
-                    <tr>
-                        <td>{{ $position->title }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Leave Requests Data -->
-        <h2>Leave Requests</h2>
-        <!--    <div class="table-responsive">
-            <table class="table table-hover table-danger">
-                <thead class="bg-danger text-white">
-                    <tr>
-                        <th>Employee</th>
-                        <th>Leave Type</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($leaveRequests as $leaveRequest)
-                    <tr data-id="{{ $leaveRequest->id }}" class="clickable-row">
-                        <form action="{{ route('start-work-day') }}" method="POST" class="d-none">
-                            @csrf
-                            <input type="hidden" name="leave_request_id" value="{{ $leaveRequest->id }}">
-                        </form>
-                        <td>{{ $leaveRequest->employee->name ?? 'Unknown' }}</td>
-                        <td>{{ $leaveRequest->leave_type }}</td>
-                        <td>{{ $leaveRequest->start_date }}</td>
-                        <td>{{ $leaveRequest->end_date }}</td>
-                        <td>{{ $leaveRequest->status }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    -->
-        <script>
-            document.querySelectorAll('.clickable-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    this.querySelector('form').submit();
-                });
-            });
-
-            function submitForm(action) {
-                document.getElementById('action').value = action;
-                document.getElementById('day-action-form').submit();
-            }
-        </script>
-    </div>
+    <!-- Footer -->
+    <footer class="footer text-center text-muted">
+        All Rights Reserved by Adminmart. Designed and Developed by <a href="https://wrappixel.com">WrapPixel</a>.
+    </footer>
 </div>
 
-<script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
-<script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<!-- apps -->
-<script src="{{ asset('dist/js/app-style-switcher.js') }}"></script>
-<script src="{{ asset('dist/js/feather.min.js') }}"></script>
-<script src="{{ asset('assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}"></script>
-<script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
-<!-- Custom JavaScript -->
-<script src="{{ asset('dist/js/custom.min.js') }}"></script>
-<!-- This page JavaScript -->
-<script src="{{ asset('assets/extra-libs/c3/d3.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/c3/c3.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist/dist/chartist.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js') }}"></script>
-<script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
+<!-- ============================================================== -->
 
+<script src="assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
+<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="dist/js/app-style-switcher.js"></script>
+<script src="dist/js/feather.min.js"></script>
+<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+<script src="dist/js/sidebarmenu.js"></script>
+<script src="dist/js/custom.min.js"></script>
+<script src="assets/extra-libs/c3/d3.min.js"></script>
+<script src="assets/extra-libs/c3/c3.min.js"></script>
+<script src="assets/libs/chartist/dist/chartist.min.js"></script>
+<script src="assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+<script src="assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js"></script>
+<script src="assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js"></script>
+<script src="dist/js/pages/dashboards/dashboard1.min.js"></script>
 </body>
 </html>

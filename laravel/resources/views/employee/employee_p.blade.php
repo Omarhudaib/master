@@ -3,67 +3,87 @@
     <!-- ============================================================== -->
     <!-- Bread crumb and right sidebar toggle -->
     <!-- ============================================================== -->
-    <div class="page-breadcrumb">
-        <div class="row">
-            <div class="col-7 align-self-center">
-                <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Ticket List</h4>
-                <div class="d-flex align-items-center">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb m-0 p-0">
-                            <li class="breadcrumb-item"><a href="{{ asset('index.html') }}" class="text-muted">Apps</a></li>
-                            <li class="breadcrumb-item text-muted active" aria-current="page">Ticket List</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-            <div class="col-5 align-self-center">
-                <div class="customize-input float-right">
-                    <select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
-                        <option selected>Aug 19</option>
-                        <option value="1">July 19</option>
-                        <option value="2">Jun 19</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ============================================================== -->
-    <!-- End Bread crumb and right sidebar toggle -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
     <div class="container-fluid">
-    <h2>User Details</h2>
-    <form action="{{ route('employee_p.update', $user->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+        <h2>Employee Details</h2>
+        <form action="{{ route('employee_p.update', $employee->id) }}" method="POST">
+            @csrf
+            @method('PUT')
 
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" name="name" id="name" class="form-control" value="{{ $user->name }}" required>
-        </div>
+            <!-- Updatable Fields -->
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" id="first_name" class="form-control" value="{{ $employee->first_name }}" required>
+            </div>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}" required>
-        </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="last_name" class="form-control" value="{{ $employee->last_name }}" required>
+            </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control">
-        </div>
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ $employee->date_of_birth }}" required>
+            </div>
 
-        <div class="form-group">
-            <label for="password_confirmation">Confirm Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
-        </div>
+            <div class="form-group">
+                <label for="national_id">National ID</label>
+                <input type="text" name="national_id" id="national_id" class="form-control" value="{{ $employee->national_id }}" required>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
-</div>
-</div>
-</div>
+            <div class="form-group">
+                <label for="marital_status">Marital Status</label>
+                <select name="marital_status" id="marital_status" class="form-control" required>
+                    <option value="single" {{ $employee->marital_status == 'single' ? 'selected' : '' }}>Single</option>
+                    <option value="married" {{ $employee->marital_status == 'married' ? 'selected' : '' }}>Married</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone_number">Phone Number</label>
+                <input type="text" name="phone_number" id="phone_number" class="form-control" value="{{ $employee->phone_number }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="employee_identifier">Employee Identifier</label>
+                <input type="text" name="employee_identifier" id="employee_identifier" class="form-control" value="{{ $employee->employee_identifier }}" required>
+            </div>
+
+            <!-- Disabled Fields (cannot be updated) -->
+            <div class="form-group">
+                <label for="hire_date">Hire Date (Read Only)</label>
+                <input type="text" id="hire_date" class="form-control" value="{{ $employee->hire_date }}" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="department_id">Department (Read Only)</label>
+                <input type="text" id="department_id" class="form-control" value="{{ $employee->department->name }}" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="position_id">Position (Read Only)</label>
+                <input type="text" id="position_id" class="form-control" value="{{ $employee->position->name }}" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="salary">Salary (Read Only)</label>
+                <input type="text" id="salary" class="form-control" value="{{ $employee->salary }}" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="sick_leaves">Sick Leaves (Read Only)</label>
+                <input type="text" id="sick_leaves" class="form-control" value="{{ $employee->sick_leaves }}" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="annual_vacation_days">Annual Vacation Days (Read Only)</label>
+                <input type="text" id="annual_vacation_days" class="form-control" value="{{ $employee->annual_vacation_days }}" disabled>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Employee</button>
+        </form>
+    </div>
+
+
 </div>
 
 <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
