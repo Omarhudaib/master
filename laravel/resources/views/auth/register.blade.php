@@ -27,9 +27,8 @@
         <!-- Preloader - style you can find in spinners.css -->
         <!-- ============================================================== -->
         <div class="preloader">
-            <div class="lds-ripple">
-                <div class="lds-pos"></div>
-                <div class="lds-pos"></div>
+
+
             </div>
         </div>
         <!-- ============================================================== -->
@@ -44,9 +43,9 @@
                 <div class="col-lg-7 col-md-5 modal-bg-img" style="background-image: url(assets/images/feature2.png);">
                 </div>
                 <div class="col-lg-5 col-md-7 bg-white">
-                    <div class="p-3">
-                        <h2 class="mt-3 text-center">Sign Up</h2>
-                        <p class="text-center">Create your account to access the admin panel.</p>
+                    <div class="p-2">
+                        <h2 class="mt-2 text-center">Sign Up</h2>
+
  @if ($errors->any())
     <div class="alert alert-danger">
         <ul>

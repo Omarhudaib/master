@@ -25,14 +25,14 @@
         .header {
             margin: 0;
             padding: 0;
-            background-image: url('{{ asset('assets/images/background/home.jpg') }}');
+            background-image: url('{{ asset('assets/images/big/auth-bg.jpg') }}');
             background-size: cover;
             background-position: left;
             height: 85vh; /* Full viewport height */
             display: flex;
             justify-content: center; /* Center content horizontally */
             align-items: center; /* Center content vertically */
-            color: #fff; /* Text color for better contrast */
+            color: #000; /* Text color for better contrast */
         }
 
         .header h1,
@@ -50,7 +50,7 @@
         }
 
         .content-section {
-            min-height: 300px; /* Ensure sections have minimum height */
+            height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center; /* Center content vertically */
@@ -61,6 +61,21 @@
             text-align: left;
             margin-top: 15px; /* Space above the text */
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                height: 60vh; /* Adjust header height for smaller screens */
+            }
+
+            .content-section {
+                height: auto; /* Allow content section to grow */
+            }
+
+            .feature-text {
+                text-align: center; /* Center text on smaller screens */
+            }
+        }
     </style>
 </head>
 
@@ -70,6 +85,9 @@
         <a class="navbar-brand" href="/">
             <img src="{{ asset('assets/images/logo-icon.png') }}" alt="homepage" class="dark-logo">
         </a>
+        <h1 class="navbar-brand" style="margin: 0; font-size: 1.5rem;">
+            <a href="/" style="text-decoration: none; color: inherit;">HR & ER System</a>
+        </h1>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -78,22 +96,28 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('career') }}">Career</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#ff">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#About Our System">About Our System</a>
+                </li>
             </ul>
         </div>
     </nav>
     <hr style="padding: 0;  margin: 0;">
 
-    <!-- Header with Background Image -->
     <div class="header">
         <div>
-            <h1 class="display-4">Welcome to Our Website</h1>
+            <h1 class="display-4">Welcome to Our HR & Employee Relations System</h1>
             <p class="lead">Our platform simplifies employee management, task assignments, and improves communication between employees and management.</p>
             <a href="{{ route('login') }}" class="btn btn-primary">Get Started</a>
         </div>
     </div>
 
-    <div class="container mt-5">
-        <div class="content-section h-90">
+    <div class="container mt-5" style="height: auto;">
+        <h1 class="feature-text" id="ff" style="text-align: center">Features</h1>
+        <div class="content-section">
             <div class="row">
                 <div class="col-md-4">
                     <img src="{{ asset('assets/images/feature1.png') }}" alt="Feature 1" class="img-fluid">
@@ -113,14 +137,15 @@
             </div>
         </div>
 
-        <div class="content-section">
+        <div class="content-section h-80" id="About Our System" >
+            <h1 class="feature-text" style="text-align: center">About Our System</h1>
             <div class="row">
-                <div class="col-md-6">
-                    <h3>About Our System</h3>
+                <div class="col-md-6" >
+                    <h3 class="m-5">About Our System</h3>
                     <p>Our HR & ER System is designed to improve the workflow in your organization by offering a range of tools to manage everything from employee onboarding to performance tracking. We provide a unified platform where HR teams can collaborate seamlessly with management to ensure the success of your employees.</p>
                 </div>
                 <div class="col-md-6">
-                    <h3>Why Choose Us?</h3>
+                    <h3 class="m-5">Why Choose Us?</h3>
                     <ul>
                         <li>Easy-to-use interface for employees and management.</li>
                         <li>Comprehensive tools for HR management and employee relations.</li>
