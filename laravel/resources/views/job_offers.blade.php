@@ -23,9 +23,19 @@
         </a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">Login</a>
-                </li>
+                @if(Auth::check())
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                    </li>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">Login</a>
+                    </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('career') }}">Career</a>
                 </li>
@@ -53,7 +63,6 @@
                     </div>
                 </div>
 
-                <!-- Modal for Application Form -->
                 <!-- Modal for Application Form -->
                 <div class="modal fade" id="applyModal{{ $offer->id }}" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel{{ $offer->id }}" aria-hidden="true">
                     <div class="modal-dialog" role="document">

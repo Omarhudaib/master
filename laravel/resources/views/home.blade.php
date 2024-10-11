@@ -38,8 +38,9 @@
         .header h1,
         .header p {
             text-align: left; /* Align text to the left */
-            margin: 0; /* Remove default margins */
+            margin: 2rem; /* Remove default margins */
         }
+        .header button{margin: 0 10rem 0 10rem; }
 
         .content-section img {
             width: 100%; /* Full width */

@@ -90,53 +90,55 @@
                     <!-- toggle and nav items -->
                     <!-- ============================================================== -->
                     <ul class="navbar-nav float-left mr-auto ml-3 pl-1">
-                        @php
-                        // Fetch all pending requests for the authenticated user
-                        $pendingRequests = \App\Models\Erequest::where('status', 'Pending')->get();
-                    @endphp
 
-                    <!-- Notification -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle pl-md-3 position-relative" href="javascript:void(0)"
-                           id="bell" role="button" data-toggle="dropdown" aria-haspopup="true"
-                           aria-expanded="false">
-                            <span><i data-feather="bell" class="svg-icon"></i></span>
-                            <span class="badge badge-primary notify-no rounded-circle">{{ $pendingRequests->count() }}</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-left mailbox animated bounceInDown">
-                            <ul class="list-style-none">
-                                <li>
-                                    <div class="message-center notifications position-relative">
-                                        @forelse ($pendingRequests as $request)
-                                            <p
-                                               class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                                                <div class="btn btn-danger">
-                                                    <i data-feather="airplay" class="text-white"></i>
-                                                </div>
-                                                <div class="w-75 d-inline-block v-middle pl-2">
-                                                    <h6 class="message-title mb-0 mt-1">{{ $request->description }}</h6>
-                                                </div>
-                                            </p>
-                                        @empty
-                                            <div class="text-center py-2">No pending requests</div>
-                                        @endforelse
-                                    </div>
-                                </li>
-                                <li>
-                                    <a class="nav-link pt-3 text-center text-dark" href="{{ route('ticket_list') }}">
-                                        <strong>Check all notifications</strong>
-                                        <i class="fa fa-angle-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <!-- End Notification -->
 
-                        <!-- End Notification -->
+
+            @php
+            // Fetch all pending tasks for the authenticated user
+            $pendingTasks = \App\Models\Task::where('employee_id', auth()->id())
+                ->where('status', 'Pending')
+                ->get();
+
+            // Fetch all pending tickets for the authenticated user
+            $pendingTickets = \App\Models\Ticket::where('employee_id', auth()->id())
+                ->where('status', 'Open')
+                ->get();
+
+                $pendingRequests = $pendingTasks->merge($pendingTickets);
+            @endphp
+
+
                         <!-- ============================================================== -->
                         <!-- create new -->
                         <!-- ============================================================== -->
+                        <!-- Notification -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle pl-md-3 position-relative" href="javascript:void(0)"
+                               id="bell" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span><i data-feather="bell" class="svg-icon"></i></span>
+                                <span class="badge badge-primary notify-no rounded-circle">{{ $pendingRequests->count() }}</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-left mailbox animated bounceInDown">
+                                <ul class="list-style-none">
+                                    <li>
+                                        <div class="message-center notifications position-relative">
+                                            @forelse ($pendingRequests as $request)
+                                                <p class="message-item d-flex align-items-center border-bottom px-3 py-2">
+                                                    <div class="btn btn-danger">
+                                                        <i data-feather="airplay" class="text-white"></i>
+                                                    </div>
+                                                    <div class="w-75 d-inline-block v-middle pl-2">
+                                                        <h6 class="message-title mb-0 mt-1">{{ $request->description }}</h6>
+                                                    </div>
+                                                </p>
+                                            @empty
+                                                <div class="text-center py-2">No pending requests</div>
+                                            @endforelse
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
 
 
                     </ul>
