@@ -89,35 +89,41 @@ public function updateStatusreq(Request $request, $id)
             return redirect()->route('requests.index')->with('success', 'Request deleted successfully.');
         }
 
+        public function index()
+        {
+            // Fetch data with pagination
+            $employees = Employee::paginate(20);
+            $tasks = Task::paginate(20);
+            $departments = Department::paginate(20);
+            $positions = Position::paginate(20);
+            $leaveRequests = LeaveRequest::paginate(20);
+            $dailyInOuts = DailyInOut::paginate(20);
+            $teams = Team::with(['leader', 'projects', 'employees'])->get();
 
-    public function index()
-{
-    $employees = Employee::paginate(20);
-    $tasks = Task::paginate(20);
-    $departments = Department::paginate(20);
-    $positions = Position::paginate(20);
-    $leaveRequests = LeaveRequest::paginate(20);
-    $dailyInOuts = DailyInOut::paginate(20);
- $teams = Team::with(['leader', 'projects', 'employees'])->get();
+            // Fetch the authenticated employee ID
+            $employeeId = auth()->user()->employee->id;
 
- $employeeId = auth()->user()->employee->id;
+            // Get the latest check-in record
+            $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
+                                        ->orderBy('check_in', 'desc')
+                                        ->first();
 
-    $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
-                                ->orderBy('check_in', 'desc')
-                                ->first();
+            // Determine if the user can check in or check out
+            $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
+            $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
 
-    // Determine if the user can check in or check out
-    $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
-    $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
+            // Calculate total counts
+            $totalEmployees = Employee::count();
+            $totalProjects = Project::count();
+            $totalTasks = Task::count();
+            $totalDepartments = Department::count();
+            $totalLeaveRequests = LeaveRequest::count(); // Add this line for leave requests
 
-
-
-
-
+            // Pass totals to the view along with the data
+            return view('admin.home_admin', compact('latestCheckIn', 'canCheckIn', 'canCheckOut', 'employees', 'tasks', 'teams', 'departments', 'positions', 'leaveRequests', 'dailyInOuts', 'totalEmployees', 'totalProjects', 'totalTasks', 'totalDepartments', 'totalLeaveRequests')); // Pass $totalLeaveRequests
+        }
 
 
-    return view('admin.home_admin', compact('latestCheckIn', 'canCheckIn', 'canCheckOut','employees', 'tasks','teams', 'departments', 'positions', 'leaveRequests', 'dailyInOuts'));
-}
 
 
 public function showall()
@@ -460,7 +466,7 @@ public function listTasks()
                 'status' => 'required|in:Pending,In Progress,Completed',
             ]);
 
-        
+
             Task::create($request->all());
 
             return redirect()->route('tasks.index')->with('success', 'Task created successfully.');

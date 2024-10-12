@@ -234,12 +234,7 @@
                                 <span class="hide-menu">Tasks</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('requests.index') }}" aria-expanded="false">
-                                <i class="fas fa-paper-plane"></i> <!-- Icon for Requests -->
-                                <span class="hide-menu">Requests</span>
-                            </a>
-                        </li>
+        
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('meetings.index') }}" aria-expanded="false">
                                 <i class="fas fa-calendar-alt"></i> <!-- Icon for Meetings -->
@@ -264,18 +259,7 @@
                                 <span class="hide-menu">Salary Report</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('chat.index', ['employeeId' => auth()->user()->employee->id]) }}" aria-expanded="false">
-                                <i class="fas fa-briefcase"></i> <!-- Icon for Positions -->
-                                <span class="hide-menu">chat</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('employees.relations', ['id' => auth()->user()->employee->id]) }}" aria-expanded="false">
-                                <i class="fas fa-briefcase"></i> <!-- Icon for Positions -->
-                                <span class="hide-menu">relations</span>
-                            </a>
-                        </li>
+
                         <li class="list-divider"></li>
 
                         <form method="POST" action="{{ route('logout') }}">
