@@ -2,14 +2,15 @@
 
 <div class="page-wrapper">
     <div class="page-breadcrumb">
-        <h2>Your Tasks</h2>
+        <h2 class="text-center">Your Tasks</h2>
         <div class="card">
             <div class="card-body">
                 @if($tasks->isEmpty())
                     <p>No tasks assigned to you.</p>
                 @else
-                    <table class="table">
-                        <thead>
+                <table class="table table-bordered">
+
+                        <thead class="bg-primary text-white">
                             <tr>
                                 <th>Title</th>
                                 <th>Description</th>

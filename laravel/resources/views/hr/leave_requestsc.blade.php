@@ -3,6 +3,11 @@
     <div class="page-breadcrumb">
         <div class="row">
             <h1>Create Leave Request</h1>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+    
+                </div>
+                <div class="card-body">
             <form action="{{ route('leave_requestss') }}" method="POST">
                 @csrf
                 <div class="form-group">
@@ -13,6 +18,7 @@
                         @endforeach
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="leave_type">Leave Type</label>
                     <select name="leave_type" id="leave_type" class="form-control">

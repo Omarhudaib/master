@@ -5,9 +5,9 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +45,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
+Route::get('/logout',function() {
+    return view('home');});
 
 // In your web.php
 Route::post('/day-action', [EmployeeController::class, 'handleDayAction'])->name('day-action');
@@ -60,6 +61,7 @@ Route::get('chate/{user}', [EmployeeController::class, 'showe'])->name('chate.sh
 Route::post('chate/send', [EmployeeController::class, 'sende'])->name('chate.send');
 
 Route::get('/employee', [EmployeeController::class, 'indexEmployee'])->name('employee');
+Route::get('/task_list', [EmployeeController::class, 'taskEmployee'])->name('task_list');
 Route::get('/ticket_list', [EmployeeController::class, 'ticketEmployee'])->name('ticket_list');
 Route::get('/',function() {
     return view('home');});
@@ -77,6 +79,16 @@ Route::patch('/tickets/{id}/update', [EmployeeController::class, 'updateStatusti
 Route::get('employee_p/{id}/edit', [EmployeeController::class, 'edit'])->name('employee_p.edit');
 Route::put('employee_p/{id}', [EmployeeController::class, 'update'])->name('employee_p.update');
 
+
+Route::prefix('tasksem')->group(function () {
+    Route::get('/', [EmployeeController::class, 'listTasks'])->name('taskse.index');
+    Route::get('create', [EmployeeController::class, 'showCreateForm'])->name('taskse.create');
+    Route::post('store', [EmployeeController::class, 'storeTask'])->name('taskse.store');
+    Route::get('{task}', [EmployeeController::class, 'showTask'])->name('taskse.show');
+    Route::get('{task}/edit', [EmployeeController::class, 'showEditForm'])->name('taskse.edit');
+    Route::put('{task}', [EmployeeController::class, 'updateTask'])->name('taskse.update');
+    Route::delete('{task}', [EmployeeController::class, 'deleteTask'])->name('taskse.delete');
+});
 
 
 
@@ -164,6 +176,9 @@ Route::prefix('tasksd')->group(function () {
 });
 Route::get('fetch-employeesd/{projectId}', [AdminController::class, 'fetchEmployees']);
 
+Route::get('employees/{id}/relations', [AdminController::class, 'showRelations'])->name('employees.relations');
+Route::post('employees/{id}/relations', [AdminController::class, 'addRelation'])->name('employees.addRelation');
+Route::delete('employees/{employee}/relations/{relatedEmployee}', [AdminController::class, 'removeRelation'])->name('employees.removeRelation');
 
 
 // Display requests
@@ -211,8 +226,8 @@ Route::delete('/meetingsd/{meeting}', [AdminController::class, 'destroMeeting'])
 Route::get('/reportd', [AdminController::class, 'report'])->name('report');
 
 
-Route::post('/daily_in_outd/check-in', [AdminController::class, 'checkIn'])->name('daily_in_out.checkIn');
-Route::post('/daily_in_outd/check-out', [AdminController::class, 'checkOut'])->name('daily_in_out.checkOut');
+Route::post('/daily_in_out/check-in', [AdminController::class, 'checkIn'])->name('daily_in_out.checkIn');
+Route::post('/daily_in_out/check-out', [AdminController::class, 'checkOut'])->name('daily_in_out.checkOut');
 
 
 
@@ -244,7 +259,6 @@ Route::delete('/ticket/{ticket}', [AdminController::class, 'destroyTicket'])->na
 
 //hr
 
-Route::get('/home_hr', [HrController::class, 'index'])->name('employeesh');
 Route::get('/employeesh', [HrController::class, 'showall'])->name('employeesh');
 Route::get('/employees_addh', [HrController::class, 'showemployee'])->name('employees_addh');
 
@@ -275,6 +289,10 @@ Route::prefix('positions')->group(function () {
 
 
 
+// routes/web.php
+Route::get('/attendance/{employee}', [HrController::class, 'showa'])->name('attendance.show');
+Route::get('/attendance/edit/{id}', [HrController::class, 'edita'])->name('attendance.edit');
+Route::put('/attendance/update/{id}', [HrController::class, 'updatea'])->name('attendance.update');
 
 
 Route::get('/chat/{employeeId}', [HrController::class, 'indexm'])->name('chath.index');
@@ -345,11 +363,19 @@ Route::delete('hr/leave_requests/{leaveRequest}', [HrController::class, 'destroy
 // In routes/web.php
 Route::get('/job-requests', [HrController::class, 'JobRequest'])->name('job.requests.index');
 
-use App\Http\Controllers\JobOfferController;
 
 Route::resource('job_offers', JobOfferController::class);
 Route::get('/career', [JobOfferController::class, 'show'])->name('career');
 Route::post('/job/{id}/apply', [JobOfferController::class, 'apply'])->name('job.apply');
+
+
+
+
+
+
+
+
+
 
 
 

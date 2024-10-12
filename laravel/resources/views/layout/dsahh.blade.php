@@ -265,14 +265,14 @@
                             <a class="sidebar-link" href="{{ route('job_offers.index') }}" aria-expanded="false">
                                 <i class="fas fa-briefcase"></i> <!-- Icon for Job Offers -->
                                 <span class="hide-menu">Job Offers</span>
-                            </a>
-                        </li>
+                   </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('job.requests.index') }}" aria-expanded="false">
                                 <i class="fas fa-file"></i> <!-- Icon for Job Offers -->
                                 <span class="hide-menu">Job Requests</span>
                             </a>
-                        </li>
+                        </li>         </a>
+
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

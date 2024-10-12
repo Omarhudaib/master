@@ -196,7 +196,7 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="sidebar-item">
-                            <a class="sidebar-link sidebar-link" href="{{ url('admin') }}" aria-expanded="false">
+                            <a class="sidebar-link sidebar-link" href="{{  route('admin.index')}}" aria-expanded="false">
                                 <i data-feather="home" class="feather-icon"></i>
                                 <span class="hide-menu">Dashboard</span>
                             </a>
@@ -270,7 +270,12 @@
                                 <span class="hide-menu">chat</span>
                             </a>
                         </li>
-
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('employees.relations', ['id' => auth()->user()->employee->id]) }}" aria-expanded="false">
+                                <i class="fas fa-briefcase"></i> <!-- Icon for Positions -->
+                                <span class="hide-menu">relations</span>
+                            </a>
+                        </li>
                         <li class="list-divider"></li>
 
                         <form method="POST" action="{{ route('logout') }}">

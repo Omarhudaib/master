@@ -460,6 +460,7 @@ public function listTasks()
                 'status' => 'required|in:Pending,In Progress,Completed',
             ]);
 
+        
             Task::create($request->all());
 
             return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
@@ -604,6 +605,42 @@ public function listTasks()
 
 
 
+        public function showRelations($employeeId)
+        {
+            // Get the employee
+            $employee = Employee::with('relatedEmployees')->findOrFail($employeeId);
+
+            // Get all employees to show for potential relations
+            $allEmployees = Employee::where('id', '!=', $employeeId)->get();
+
+            // Pass both the employee and the list of all employees to the view
+            return view('admin.relations', compact('employee', 'allEmployees'));
+        }
+
+
+        public function addRelation(Request $request, $employeeId)
+        {
+            $employee = Employee::findOrFail($employeeId);
+
+            // Validate input
+            $request->validate([
+                'related_employee_id' => 'required|exists:employees,id',
+                'relation_type' => 'required|in:Manager,Supervisor,Mentor,Peer',
+            ]);
+
+            // Attach the relation
+            $employee->relatedEmployees()->attach($request->related_employee_id, ['relation_type' => $request->relation_type]);
+
+            return redirect()->back()->with('success', 'Relation added successfully.');
+        }
+
+        public function removeRelation($employeeId, $relatedEmployeeId)
+        {
+            $employee = Employee::findOrFail($employeeId);
+            $employee->relatedEmployees()->detach($relatedEmployeeId);
+
+            return redirect()->back()->with('success', 'Relation removed successfully.');
+        }
 
 
 
@@ -760,20 +797,27 @@ public function destroyTicket(Ticket $ticket)
 
 
 
-
-
 public function checkIn()
 {
     $employeeId = auth()->user()->employee->id;
+    $today = now()->format('Y-m-d');
 
-    // Insert check-in time
-    DailyInOut::create([
-        'employee_id' => $employeeId,
-        'check_in' => now(),
-    ]);
+    // Check if the employee has already checked in today
+    $existingCheckIn = DailyInOut::where('employee_id', $employeeId)
+                                 ->whereDate('check_in', $today)
+                                 ->first();
 
-    return redirect()->back()->with('success', 'Checked in successfully.');
+    if (!$existingCheckIn) {
+        // Allow check-in
+        DailyInOut::create([
+            'employee_id' => $employeeId,
+            'check_in' => now(),
+        ]);
+    }
+
+    return redirect()->back();
 }
+
 
 public function checkOut()
 {

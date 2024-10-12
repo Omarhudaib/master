@@ -207,7 +207,19 @@
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('ticket_list') }}" aria-expanded="false">
                                 <i data-feather="tag" class="feather-icon"></i>
-                                <span class="hide-menu">Tasks and Ticket List</span>
+                                <span class="hide-menu">Ticket List</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('taskse.index') }}" aria-expanded="false">
+                                <i data-feather="tag" class="feather-icon"></i>
+                                <span class="hide-menu">Ticketsssdadc List</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('task_list') }}" aria-expanded="false">
+                                <i data-feather="tag" class="feather-icon"></i>
+                                <span class="hide-menu">Tasks List</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
@@ -225,7 +237,7 @@
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('leave_requests_index') }}" aria-expanded="false">
                                 <i class="fas fa-comment-dots"></i> <!-- Changed to a different chat icon -->
-                                <span class="hide-menu">Chat</span>
+                                <span class="hide-menu">leave requests</span>
                             </a>
                         </li>
 

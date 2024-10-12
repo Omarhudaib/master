@@ -3,6 +3,11 @@
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-12">
+                <div class="card shadow-sm">
+                  <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Create New Department</h4>
+                    </div>
+                    <div class="card-body">
                 <h2>All Requests</h2>
                 <h1>Leave Requests</h1>
                 <a href="{{ route('leave_requestsc') }}" class="btn btn-primary mb-3">Create Leave Request</a>

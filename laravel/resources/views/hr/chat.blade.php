@@ -4,7 +4,7 @@
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-md-12">
-                <h2 class="mb-4">Employee Chat</h2>
+                <h2 class="mb">Employee Chat</h2>
 
                 <!-- Card for Chat -->
                 <div class="card shadow-sm">

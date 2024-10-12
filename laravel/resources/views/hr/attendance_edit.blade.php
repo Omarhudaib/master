@@ -4,27 +4,34 @@
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-md-12">
-
-                <h1>Edit Attendance</h1>
-
-                <form action="{{ route('attendance.update', $attendance->id) }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label for="check_in">Check-in Time:</label>
-                        <input type="datetime-local" class="form-control" id="check_in" name="check_in" value="{{ $attendance->in_time }}">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Create New Department</h4>
                     </div>
-                    <div class="form-group">
-                        <label for="check_out">Check-out Time:</label>
-                        <input type="datetime-local" class="form-control" id="check_out" name="check_out" value="{{ $attendance->out_time }}">
-                    </div>
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                </form>
-                
-                
-            </div>
+                    <div class="card-body">
+
+                    <h2>Edit Attendance Record</h2>
+
+                    <form action="{{ route('attendance.update', $attendance->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="form-group">
+                            <label for="check_in">Check In</label>
+                            <input type="datetime-local" class="form-control" id="check_in" name="check_in" value="{{ \Carbon\Carbon::parse($attendance->check_in)->format('Y-m-d\TH:i') }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="check_out">Check Out</label>
+                            <input type="datetime-local" class="form-control" id="check_out" name="check_out" value="{{ $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('Y-m-d\TH:i') : '' }}">
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Update</button>
+                    </form>
         </div>
     </div>
-
+</div>
+</div>
 <!-- Include your JavaScript files as needed -->
 <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>

@@ -43,43 +43,6 @@
                             </div>
                         </div>
 
-                        <!-- Tasks Table -->
-                        <h4>Tasks</h4>
-                        <div class="table-responsive">
-                            <table id="task_table" class="table table-striped table-bordered no-wrap">
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Title</th>
-                                        <th>Employee</th>
-                                        <th>Due Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($tasks as $task)
-                                        <tr>
-                                            <td>{{ $task->status }}</td>
-                                            <td>{{ $task->title }}</td>
-                                            <td>{{ $task->employee->name }}</td>
-                                            <td>{{ $task->due_date }}</td>
-                                            <td>
-                                                <form action="{{ route('updateTask', $task->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
-                                                        <option value="In Progress" {{ $task->status === 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                                        <option value="Completed" {{ $task->status === 'Completed' ? 'selected' : '' }}>Completed</option>
-                                                        <option value="On Hold" {{ $task->status === 'On Hold' ? 'selected' : '' }}>On Hold</option>
-                                                    </select>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
                         <!-- Tickets Table -->
                         <h4>Tickets</h4>
                         <div class="table-responsive">
@@ -89,10 +52,7 @@
                                         <th>Status</th>
                                         <th>Title</th>
                                         <th>ID</th>
-                                        <th>Product</th>
-                                        <th>Created by</th>
-                                        <th>Date</th>
-                                        <th>Agent</th>
+                                        <th>description</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -101,19 +61,17 @@
                                         <tr>
                                             <td>{{ $ticket->status }}</td>
                                             <td>{{ $ticket->subject }}</td>
-                                            <td>{{ $ticket->id }}</td>
-                                            <td>{{ $ticket->product_id }}</td>
-                                            <td>{{ $ticket->employee->name }}</td>
-                                            <td>{{ $ticket->created_at }}</td>
-                                            <td>{{ $ticket->agent }}</td>
+                                           <td>{{ $ticket->id }}</td>
+                                            <td>{{ $ticket->description }}</td>
+                                        <td>{{ $ticket->agent }}</td>
                                             <td>
                                                 <form action="{{ route('updateTicket', $ticket->id) }}" method="POST">
                                                     @csrf
                                                     @method('PATCH')
                                                     <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
-                                                        <option value="Open" {{ $ticket->status === 'Open' ? 'selected' : '' }}>Pending</option>
-                                                        <option value="In Progress" {{ $ticket->status === 'In Progress' ? 'selected' : '' }}>Responded</option>
-                                                        <option value="Closed" {{ $ticket->status === 'Closed' ? 'selected' : '' }}>Resolved</option>
+                                                        <option value="Open" {{ $ticket->status === 'Open' ? 'selected' : '' }}>Open</option>
+                                                        <option value="In Progress" {{ $ticket->status === 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                                                        <option value="Closed" {{ $ticket->status === 'Closed' ? 'selected' : '' }}>Closed</option>
                                                     </select>
                                                 </form>
                                             </td>

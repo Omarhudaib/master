@@ -6,8 +6,8 @@
     <!-- Bread crumb and right sidebar toggle -->
     <!-- ============================================================== -->
     <div class="page-breadcrumb">
-        <div class="row">
-            <h2>Edit Employee</h2>
+            <h2>Edit Employee</h2> <div class="card shadow-sm">
+                <div class="card-header bg-white">
             <div class="table-responsive">
                 <form action="{{ route('employeesh.update', $employee->id) }}" method="POST">
                     @csrf

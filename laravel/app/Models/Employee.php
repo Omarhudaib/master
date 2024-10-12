@@ -29,7 +29,7 @@ class Employee extends Model
     }
 
     // Relationship with Teams
-    public function teams(): BelongsToMany
+   public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'employee_team', 'employee_id', 'team_id');
     }
@@ -83,4 +83,11 @@ class Employee extends Model
      {
          return $this->hasMany(Leave::class); // Assuming Leave model exists
      }
+     public function relatedEmployees()
+{
+    return $this->belongsToMany(Employee::class, 'employee_relations', 'employee_id', 'related_employee_id')
+                ->withPivot('relation_type')
+                ->withTimestamps();
+}
+
 }

@@ -17,14 +17,14 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
-                                <thead class="thead-light">
+                                <thead class="thead-primary">
                                     <tr>
                                         <th>Subject</th>
                                         <th>Date</th>
                                         <th>Location</th>
                                         <th>Organizer</th>
                                         <th>Manager</th>
-                                        <th>Actions</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>

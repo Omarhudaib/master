@@ -4,17 +4,16 @@
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-md-12">
-                <h2 class="text-center mb-4">Teams</h2>
+                <h2 class="text-center mb-1">Teams</h2>
 
                 <!-- Card for creating new team -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Add New Team</h4>
-                    </div>
+
+
+
                     <div class="card-body">
                         <a href="{{ route('teamsh.create') }}" class="btn btn-info mb-3">Add Team</a>
                     </div>
-                </div>
+
 
                 <!-- Card for displaying list of teams -->
                 <div class="card shadow-sm">

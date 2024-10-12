@@ -4,6 +4,9 @@
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-md-12">
+                <div class="card shadow-sm">
+
+                    <div class="card-body">
                 <h2 class="text-center">Job Requests</h2>
                 <table class="table table-bordered">
                     <thead>
@@ -26,12 +29,14 @@
                                 <td>{{ $request->jobOffer->title }}</td>
                                 <td>{{ $request->cover_letter }}</td>
                                 <td>
-                                    @if($request->resume)
-                                        <a href="{{ asset('storage/' . $request->resume) }}" download class="btn btn-success btn-sm">Download Resume</a>
+                                    @if($request->resume_path)
+                                        <a href="{{ Storage::url($request->resume_path) }}" download class="btn btn-success btn-sm">Download Resume</a>
                                     @else
                                         <span>No Resume Uploaded</span>
                                     @endif
                                 </td>
+
+
                                 <td>{{ $request->created_at->format('M d, Y') }}</td>
                             </tr>
                         @empty

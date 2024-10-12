@@ -29,26 +29,17 @@ class HrController extends Controller
 
 
 
+    public function indexa()
+    {
+        $today = Carbon::today();
 
+        // Fetch employees with today's attendance
+        $employees = Employee::with(['dailyInOut' => function ($query) use ($today) {
+            $query->whereDate('check_in', $today);
+        }])->get();
 
-        public function indexa()
-        {
-            $today = Carbon::today(); // Get today's date
-
-            // Get all employees with their attendance records for today
-            $employees = Employee::with(['dailyInOut' => function ($query) use ($today) {
-                $query->whereDate('check_in', $today);
-            }])->get();
-
-            // Optionally, you can have an off-day or leave status check here
-            // assuming there is a `leaves` or `off_days` table:
-            // $employees->load(['leaves' => function ($query) use ($today) {
-            //     $query->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today);
-            // }]);
-
-            return view('hr.attendance', compact('employees'));
-        }
-
+        return view('hr.attendance', compact('employees'));
+    }
 
 
 
@@ -78,20 +69,24 @@ class HrController extends Controller
     return view('hr.home_hr', compact('latestCheckIn', 'canCheckIn', 'canCheckOut','employees'));
 }
 
-
 public function showall()
 {
     // Check if the authenticated user has an associated employee
     if (auth()->user() && auth()->user()->employee) {
         $employeeId = auth()->user()->employee->id;
 
+        // Get today's date
+        $today = now()->format('Y-m-d');
+
+        // Get the latest check-in record for today
         $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
+                                   ->whereDate('check_in', $today) // Check if there is a record for today
                                    ->orderBy('check_in', 'desc')
                                    ->first();
 
         // Determine if the user can check in or check out
-        $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
-        $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
+        $canCheckIn = is_null($latestCheckIn) || !is_null($latestCheckIn->check_out); // Allow check-in if no check-in today or already checked out
+        $canCheckOut = !is_null($latestCheckIn) && is_null($latestCheckIn->check_out); // Allow check-out if check-in exists and not checked out yet
     } else {
         // Handle the case where the user doesn't have an employee record
         $employeeId = null;
@@ -289,9 +284,39 @@ public function checkOut()
     return redirect()->back()->with('success', 'Checked out successfully.');
 }
 
+public function edita($id)
+{
+    // Retrieve the attendance record
+    $attendance = DailyInOut::findOrFail($id);
+
+    return view('hr.attendance_edit', compact('attendance'));
+}
+
+public function updatea(Request $request, $id)
+{
+    $request->validate([
+        'check_in' => 'required|date',
+        'check_out' => 'nullable|date',
+    ]);
+
+    // Find the attendance record and update it
+    $attendance = DailyInOut::findOrFail($id);
+    $attendance->check_in = $request->check_in;
+    $attendance->check_out = $request->check_out;
+    $attendance->save();
+
+    return redirect()->route('attendance.show', $attendance->employee_id)->with('success', 'Attendance record updated successfully!');
+}
 
 
+public function showa($employeeId)
+{
+    // Fetch the employee by ID
+    $employee = Employee::with('dailyInOut')->findOrFail($employeeId);
 
+    // Return the view with employee and attendance data
+    return view('hr.attendance_show', compact('employee'));
+}
 
 
 
@@ -676,25 +701,18 @@ public function showTask()
     return view('hr.task_show', compact('tasks', 'employee'));
 }
 
-
 public function updateStatus(Request $request, Task $task)
 {
-    // Check if the authenticated user is assigned to this task
-    if ($task->employee_id !== auth()->id()) {
-        abort(403, 'Unauthorized action.');
-    }
-
     // Validate the request
     $request->validate([
-        'status' => 'required|in:Pending,In Progress,Completed',
+        'status' => 'required|string|in:In Progress,Completed,Pending',
     ]);
 
-    // Update the task's status
-    $task->status = $request->status;
+    // Update the task status
+    $task->status = $request->input('status');
     $task->save();
 
-    // Redirect back to the task page with success message
-    return redirect()->route('tasksh.index', $task->id)->with('success', 'Task status updated successfully.');
+    return redirect()->back()->with('success', 'Task status updated successfully.');
 }
 
 
