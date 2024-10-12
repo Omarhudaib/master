@@ -3,6 +3,14 @@
 <div class="page-wrapper">
     <div class="container-fluid">
         <!-- Start Page Content -->
+        <div class="col-md-12">
+    <h2 class=" mb-4">Tasks</h2>
+
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
         <div class="row">
             <div class="col-12">
                 <div class="card">

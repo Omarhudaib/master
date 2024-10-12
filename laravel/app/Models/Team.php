@@ -23,4 +23,5 @@ class Team extends Model
     {
         return $this->belongsToMany(Employee::class, 'employee_team', 'team_id', 'employee_id');
     }
+
 }

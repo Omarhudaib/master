@@ -212,32 +212,27 @@
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('taskse.index') }}" aria-expanded="false">
-                                <i data-feather="tag" class="feather-icon"></i>
-                                <span class="hide-menu">Ticketsssdadc List</span>
+                                <i data-feather="check-square" class="feather-icon"></i> <!-- Updated icon -->
+                                <span class="hide-menu">Task List</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('task_list') }}" aria-expanded="false">
-                                <i data-feather="tag" class="feather-icon"></i>
+                                <i data-feather="list" class="feather-icon"></i> <!-- Updated icon -->
                                 <span class="hide-menu">Tasks List</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('employee_p.edit', ['id' => auth()->id()]) }}" aria-expanded="false">
-                                <i data-feather="message-square" class="feather-icon"></i>
+                                <i data-feather="edit" class="feather-icon"></i> <!-- Updated icon -->
                                 <span class="hide-menu">Edit Data</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('chate.index', ['employeeId' => auth()->user()->employee->id]) }}" aria-expanded="false">
-                                <i class="fas fa-comment-dots"></i> <!-- Changed to a different chat icon -->
-                                <span class="hide-menu">Chat</span>
-                            </a>
-                        </li>
+
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('leave_requests_index') }}" aria-expanded="false">
-                                <i class="fas fa-comment-dots"></i> <!-- Changed to a different chat icon -->
-                                <span class="hide-menu">leave requests</span>
+                                <i data-feather="clipboard" class="feather-icon"></i> <!-- Updated icon -->
+                                <span class="hide-menu">Leave Requests</span>
                             </a>
                         </li>
 
@@ -249,7 +244,6 @@
                         </form>
 
                     </ul>
-
                 </nav>
                 <!-- End Sidebar navigation -->
             </div>

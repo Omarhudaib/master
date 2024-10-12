@@ -2,6 +2,20 @@
 
 <div class="page-wrapper">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class=" mb-4">Tickets</h2>
+
+                <a href="{{ route('ticketse.create') }}" class="btn btn-primary mb-4">Create New Ticket</a>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
         <!-- Start Page Content -->
         <div class="row">
             <div class="col-12">

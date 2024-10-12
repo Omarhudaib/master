@@ -91,6 +91,12 @@ Route::prefix('tasksem')->group(function () {
 });
 
 
+Route::get('/tickete', [EmployeeController::class, 'indexTicket'])->name('ticketse.index');
+Route::get('/tickete/create', [EmployeeController::class, 'createTicket'])->name('ticketse.create');
+Route::post('/tickete', [EmployeeController::class, 'storeTicket'])->name('ticketse.store');
+Route::get('/tickete/{ticket}/edit', [EmployeeController::class, 'editTicket'])->name('ticketse.edit');
+Route::put('/tickete/{ticket}', [EmployeeController::class, 'updateTicket'])->name('ticketse.update');
+Route::delete('/tickete/{ticket}', [EmployeeController::class, 'destroyTicket'])->name('ticketse.destroy');
 
 
 
@@ -257,9 +263,9 @@ Route::delete('/ticket/{ticket}', [AdminController::class, 'destroyTicket'])->na
 
 
 
-//hr
-
-Route::get('/employeesh', [HrController::class, 'showall'])->name('employeesh');
+//hrhome_hr
+Route::get('/home_hr', [HrController::class, 'showall'])->name('home_hr');
+Route::get('/employeesh', [HrController::class, 'showallem'])->name('employeesh');
 Route::get('/employees_addh', [HrController::class, 'showemployee'])->name('employees_addh');
 
 Route::get('/employeesh/{id}', [HrController::class, 'show'])->name('employeesh.show');
@@ -371,6 +377,9 @@ Route::post('/job/{id}/apply', [JobOfferController::class, 'apply'])->name('job.
 
 
 
+Route::get('/departmentsh/{id}/edit', [HrController::class, 'editde'])->name('departmentsh.edit');
+Route::delete('/departmentsh/{id}', [HrController::class, 'destroyde'])->name('departmentsh.destroy');
+Route::put('/departmentsh/{id}', [HrController::class, 'updatede'])->name('departmentsh.update');
 
 
 

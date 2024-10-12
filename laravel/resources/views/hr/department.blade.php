@@ -6,25 +6,6 @@
             <div class="col-md-12">
                 <h2 class=" mb-4">Manage Departments</h2>
 
-                <!-- Card for creating new department -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Create New Department</h4>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('departments.create') }}" method="POST">
-                            @csrf
-                            <div class="form-group">
-                                <label for="name">Department Name:</label>
-                                <input type="text" id="name" name="name" class="form-control" required>
-                            </div>
-                            <div class="form-group mt-3">
-                                <label for="description">Description:</label>
-                                <textarea id="description" name="description" class="form-control"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-success mt-3">Create Department</button>
-                        </form>
-
                         @if(session('success'))
                             <div class="alert alert-success mt-4">
                                 {{ session('success') }}
@@ -45,6 +26,7 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Description</th>
+                                    <th>Actions</th> <!-- Add Actions column -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -53,12 +35,42 @@
                                         <td>{{ $department->id }}</td>
                                         <td>{{ $department->name }}</td>
                                         <td>{{ $department->description }}</td>
+                                        <td>
+                                            <!-- Edit button -->
+                                            <a href="{{ route('departmentsh.edit', $department->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                            <!-- Delete button -->
+                                            <form action="{{ route('departmentsh.destroy', $department->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this department?');">Delete</button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <!-- Card for creating new department -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Create New Department</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ route('departments.create') }}" method="POST">
+                            @csrf
+                            <div class="form-group">
+                                <label for="name">Department Name:</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="description">Description:</label>
+                                <textarea id="description" name="description" class="form-control"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success mt-3">Create Department</button>
+                        </form>
+
             </div>
         </div>
     </div>

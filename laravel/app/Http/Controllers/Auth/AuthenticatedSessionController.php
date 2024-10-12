@@ -34,7 +34,9 @@ class AuthenticatedSessionController extends Controller
         return redirect()->route('admin.index'); // Redirect to admin dashboard
     } elseif ($user->role_id == 3) {
         return redirect()->route('employeesh'); // Redirect to HR dashboard
-    } 
+    }  elseif ($user->role_id == 4 ) {
+        return redirect()->route('career'); // Redirect to HR dashboard
+    }
 
     // Default redirection if no specific role match
     return redirect()->route('career');

@@ -41,8 +41,42 @@ class HrController extends Controller
         return view('hr.attendance', compact('employees'));
     }
 
+    public function updatede(Request $request, $id)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        // Find the department by ID
+        $department = Department::findOrFail($id);
+
+        // Update department attributes
+        $department->name = $request->name;
+        $department->description = $request->description;
+
+        // Save the updated department
+        $department->save();
+
+        // Redirect back with a success message
+        return redirect()->route('departmentsh')->with('success', 'Department updated successfully');
+    }
 
 
+    public function editde($id)
+    {
+        $department = Department::findOrFail($id);
+        return view('hr.departments_edit', compact('department'));
+    }
+
+    public function destroyde($id)
+    {
+        $department = Department::findOrFail($id);
+        $department->delete();
+
+        return redirect()->route('departmentsh')->with('success', 'Department deleted successfully');
+    }
 
 
 
@@ -68,8 +102,59 @@ class HrController extends Controller
 
     return view('hr.home_hr', compact('latestCheckIn', 'canCheckIn', 'canCheckOut','employees'));
 }
-
 public function showall()
+{
+    // Check if the authenticated user has an associated employee
+    if (auth()->user() && auth()->user()->employee) {
+        $employeeId = auth()->user()->employee->id;
+
+        // Get today's date
+        $today = now()->format('Y-m-d');
+
+        // Get the latest check-in record for today
+        $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
+                                   ->whereDate('check_in', $today)
+                                   ->orderBy('check_in', 'desc')
+                                   ->first();
+
+        // Determine if the user can check in or check out
+        $canCheckIn = is_null($latestCheckIn) || !is_null($latestCheckIn->check_out);
+        $canCheckOut = !is_null($latestCheckIn) && is_null($latestCheckIn->check_out);
+    } else {
+        $employeeId = null;
+        $latestCheckIn = null;
+        $canCheckIn = false;
+        $canCheckOut = false;
+    }
+
+    // Counts for employees, leave requests, teams, and departments
+    $employeeCount = Employee::count();
+    $pendingLeaveRequestCount = Erequest::where('status', 'pending')->count();
+    $teamCount = Team::count();
+    $departmentCount = Department::count();
+
+    // Get departments and their employee count
+    $departments = Department::withCount('employees')->get();
+
+    // Get all employees who checked in today
+    $checkedInEmployees = DailyInOut::whereDate('check_in', $today)
+                                    ->with('employee.user')
+                                    ->get();
+
+    $employees = Employee::with(['department', 'position', 'user', 'user.role', 'teams'])->paginate(20);
+    $roles = Role::all();
+    $positions = Position::all();
+    $teams = Team::all();
+
+    return view('hr.home_hr_dsah', compact(
+        'latestCheckIn', 'canCheckIn', 'canCheckOut',
+        'employees', 'roles', 'departments', 'positions', 'teams',
+        'employeeCount', 'pendingLeaveRequestCount', 'teamCount', 'departmentCount', 'checkedInEmployees'
+    ));
+}
+
+
+public function showallem()
 {
     // Check if the authenticated user has an associated employee
     if (auth()->user() && auth()->user()->employee) {
@@ -103,8 +188,6 @@ public function showall()
 
     return view('hr.home_hr', compact('latestCheckIn', 'canCheckIn', 'canCheckOut', 'employees', 'roles', 'departments', 'positions', 'teams'));
 }
-
-
 public function showemployee()
 {
 

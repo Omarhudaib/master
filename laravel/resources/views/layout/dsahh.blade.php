@@ -191,14 +191,20 @@
         <!- ============================================================== -->
         <aside class="left-sidebar" data-sidebarbg="skin6">
             <!-- Sidebar scroll-->
-        <div class="scroll-sidebar" data-sidebarbg="skin6">
+            <div class="scroll-sidebar" data-sidebarbg="skin6">
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="sidebar-item">
-                            <a class="sidebar-link sidebar-link" href="{{ route('employeesh') }}" aria-expanded="false">
+                            <a class="sidebar-link sidebar-link" href="{{ route('home_hr') }}" aria-expanded="false">
                                 <i data-feather="home" class="feather-icon"></i>
                                 <span class="hide-menu">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link sidebar-link" href="{{ route('employeesh') }}" aria-expanded="false">
+                                <i data-feather="home" class="feather-icon"></i>
+                                <span class="hide-menu">Employees</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
@@ -207,22 +213,11 @@
                                 <span class="hide-menu">Meetings</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('requestsh.index') }}" aria-expanded="false">
-                                <i class="fas fa-paper-plane"></i> <!-- Icon for Requests -->
-                                <span class="hide-menu">Requests</span>
-                            </a>
-                        </li>
+
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('reporth') }}" aria-expanded="false">
-                                <i class="fas fa-briefcase"></i> <!-- Icon for Salary Report -->
+                                <i class="fas fa-dollar-sign"></i> <!-- Icon for Salary Report -->
                                 <span class="hide-menu">Salary Report</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('chath.index', ['employeeId' => auth()->user()->employee->id]) }}" aria-expanded="false">
-                                <i class="fas fa-comment-dots"></i> <!-- Changed to a different chat icon -->
-                                <span class="hide-menu">Chat</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
@@ -233,29 +228,29 @@
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('teamsh.index') }}" aria-expanded="false">
-                                <i class="fas fa-users"></i> <!-- Changed to a user group icon -->
+                                <i class="fas fa-users"></i> <!-- Icon for Teams -->
                                 <span class="hide-menu">Teams</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('attendance.indexx') }}" aria-expanded="false">
-                                <i class="fas fa-calendar-alt"></i> <!-- Icon for Calendar -->
+                                <i class="fas fa-calendar-check"></i> <!-- Icon for Calendar -->
                                 <span class="hide-menu">Calendar</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('hr.leave_requestsi') }}" aria-expanded="false">
-                                <i class="fas fa-file-alt"></i> <!-- Changed to a document icon -->
+                                <i class="fas fa-file-alt"></i> <!-- Icon for Leave Requests -->
                                 <span class="hide-menu">Leave Requests</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('departmentsh') }}" aria-expanded="false">
-                                <i class="fas fa-sitemap"></i> <!-- Changed to a departments icon -->
+                                <i class="fas fa-sitemap"></i> <!-- Icon for Departments -->
                                 <span class="hide-menu">Departments</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+              <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('positionsh.index') }}" aria-expanded="false">
                                 <i class="fas fa-user"></i> <!-- Icon for Positions -->
                                 <span class="hide-menu">Positions</span>
@@ -265,29 +260,25 @@
                             <a class="sidebar-link" href="{{ route('job_offers.index') }}" aria-expanded="false">
                                 <i class="fas fa-briefcase"></i> <!-- Icon for Job Offers -->
                                 <span class="hide-menu">Job Offers</span>
-                   </li>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('job.requests.index') }}" aria-expanded="false">
-                                <i class="fas fa-file"></i> <!-- Icon for Job Offers -->
+                                <i class="fas fa-file-alt"></i> <!-- Icon for Job Requests -->
                                 <span class="hide-menu">Job Requests</span>
                             </a>
-                        </li>         </a>
+                        </li>
 
-
+                        <li class="sidebar-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="btn btn-danger ml-3">Logout</button>
                             </form>
-
-
-
-
-
-
+                        </li>
                     </ul>
-
                 </nav>
                 <!-- End Sidebar navigation -->
             </div>
             <!-- End Sidebar scroll-->
         </aside>
+

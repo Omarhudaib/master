@@ -63,26 +63,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group mt-3">
-                                <label for="related_employee_id">Related Employee:</label>
-                                <select name="related_employee_id[]" id="related_employee_id" class="form-control" multiple>
-                                    <option value="">Select Related Employee(s)</option>
-                                    @foreach($employees as $employee)
-                                        <option value="{{ $employee->id }}">{{ $employee->first_name }} {{ $employee->last_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group mt-3">
-                                <label for="relation_type">Relation Type:</label>
-                                <select name="relation_type[]" id="relation_type" class="form-control">
-                                    <option value="">Select Relation Type</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Supervisor">Supervisor</option>
-                                    <option value="Mentor">Mentor</option>
-                                    <option value="Peer">Peer</option>
-                                </select>
-                            </div>
+             
 
                             <div class="form-group mt-3">
                                 <label for="salary">Salary:</label>

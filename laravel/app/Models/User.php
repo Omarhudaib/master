@@ -18,6 +18,10 @@ class User extends Authenticatable
         'role_id',
         'username',
     ];
+    public function teams()
+    {
+        return $this->hasMany(Team::class, 'team_leader_id');
+    }
 
     // Relationship with Employee
     public function employee()
@@ -30,6 +34,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
 
     protected $hidden = [
         'password',

@@ -19,63 +19,126 @@ use Illuminate\Support\Facades\Auth;
 
 
 class EmployeeController extends Controller
-{
-    public function indexEmployee()
-{
-    // Get the authenticated user's employee ID
-    $employeeId = Auth::user()->employee->id;
+{public function indexEmployee()
+    {
+        // Get the authenticated user's employee record
+        $employee = Auth::user()->employee;
 
-    // Get teams related to the authenticated employee
-    $teams = Team::with(['teamLeader', 'employees'])->get();
+        // Get teams related to the authenticated employee
+        $teams = Team::with(['teamLeader', 'employees'])->get();
 
-    // Get the latest check-in record for the employee
-    $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
-                                ->orderBy('check_in', 'desc')
-                                ->first();
+        // Get the latest check-in record for the employee
+        $latestCheckIn = DailyInOut::where('employee_id', $employee->id)
+                                    ->orderBy('check_in', 'desc')
+                                    ->first();
 
-    // Determine if the user can check in or check out
-    $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
-    $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
+        // Determine if the user can check in or check out
+        $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
+        $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
 
-    // Retrieve tasks and tickets related to the authenticated employee
-    $tasks = Task::whereHas('employee', function ($query) use ($employeeId) {
-        $query->where('user_id', Auth::id());
-    })->get();
+        // Retrieve tasks and tickets related to the authenticated employee
+        $tasks = Task::whereHas('employee', function ($query) use ($employee) {
+            $query->where('user_id', Auth::id());
+        })->get();
 
-    $tickets = Ticket::whereHas('employee', function ($query) use ($employeeId) {
-        $query->where('user_id', Auth::id());
-    })->get();
+        $tickets = Ticket::whereHas('employee', function ($query) use ($employee) {
+            $query->where('user_id', Auth::id());
+        })->get();
 
-    // Count leave requests for the employee
-    $leaveRequests = LeaveRequest::where('employee_id', $employeeId)->count();
+        // Count leave requests for the employee
+        $leaveRequests = LeaveRequest::where('employee_id', $employee->id)->count();
 
-    // Count responded, resolved, and pending tickets
-    $responded = $tickets->where('status', 'Responded')->count();
-    $resolved = $tickets->where('status', 'Resolved')->count();
-    $pending = $tickets->where('status', 'Pending')->count();
+        // Count responded, resolved, and pending tickets
+        $responded = $tickets->where('status', 'Responded')->count();
+        $resolved = $tickets->where('status', 'Resolved')->count();
+        $pending = $tickets->where('status', 'Pending')->count();
 
-    // Count pending, in-progress, and completed tasks
-    $pendingTasks = $tasks->where('status', 'Pending')->count();
-    $inProgressTasks = $tasks->where('status', 'In Progress')->count();
-    $completedTasks = $tasks->where('status', 'Completed')->count();
+        // Count pending, in-progress, and completed tasks
+        $pendingTasks = $tasks->where('status', 'Pending')->count();
+        $inProgressTasks = $tasks->where('status', 'In Progress')->count();
+        $completedTasks = $tasks->where('status', 'Completed')->count();
 
-    // Return the view with the necessary data
-    return view('employee.home_employee', compact(
-        'teams',
-        'leaveRequests',
-        'latestCheckIn',
-        'canCheckIn',
-        'canCheckOut',
-        'tasks',
-        'tickets',
-        'responded',
-        'resolved',
-        'pending',
-        'pendingTasks',
-        'inProgressTasks',
-        'completedTasks'
-    ));
-}
+        // Retrieve the count of projects related to the employee
+        $projects = Project::whereHas('team.employees', function ($query) use ($employee) {
+            $query->where('employees.id', $employee->id); // Specify 'employees.id'
+        })->count();
+
+        // Get vacation days and sick leave from the employee record
+        $annual_vacation_days = $employee->annual_vacation_days;
+        $sick_vacation = $employee->sick_leaves;
+
+        // Return the view with the necessary data
+        return view('employee.home_employee', compact(
+            'teams',
+            'leaveRequests',
+            'latestCheckIn',
+            'canCheckIn',
+            'canCheckOut',
+            'tasks',
+            'tickets',
+            'responded',
+            'resolved',
+            'pending',
+            'pendingTasks',
+            'inProgressTasks',
+            'completedTasks',
+            'projects',
+            'annual_vacation_days',
+            'sick_vacation'
+        ));
+    }
+
+
+
+
+
+
+    public function createTicket()
+    {
+        $employees = Employee::all();
+        return view('employee.tickets_create', compact('employees'));
+    }
+
+    public function storeTicket(Request $request)
+    {
+        $data = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'subject' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:Open,In Progress,Closed',
+        ]);
+
+        Ticket::create($data);
+
+        return redirect()->route('ticket_list')->with('success', 'Ticket created successfully.');
+    }
+
+    public function editTicket(Ticket $ticket)
+    {
+        $employees = Employee::all();
+        return view('employee.tickets_edit', compact('ticket', 'employees'));
+    }
+
+    public function updateTicket(Request $request, Ticket $ticket)
+    {
+        $data = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'subject' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:Open,In Progress,Closed',
+        ]);
+
+        $ticket->update($data);
+
+        return redirect()->route('ticket_list')->with('success', 'Ticket updated successfully.');
+    }
+
+    public function destroyTicket(Ticket $ticket)
+    {
+        $ticket->delete();
+        return redirect()->route('ticket_list')->with('success', 'Ticket deleted successfully.');
+    }
+
 
 
 
@@ -362,16 +425,29 @@ public function listTasks()
         }
         public function showCreateForm()
         {
-            $projects = Project::with('team.employees')->get();  // Retrieve projects with their team and employees
             $user = auth()->user();  // Get the logged-in user
 
-            $team = null;
-            $employees = collect();  // Create an empty collection for employees
+            // Get the employee associated with the logged-in user
+            $employee = $user->employee;
 
-            // Check if the user is part of a team and retrieve its employees
-            if ($user->teams && $user->teams->isNotEmpty()) {
-                $team = $user->teams->first();  // Retrieve the first team the user belongs to
-                $employees = $team->employees;  // Get all employees of the team
+            if ($employee) {
+                // Check if the employee is a team leader
+                $team = $employee->teams()->where('team_leader_id', $employee->id)->first();
+
+                if ($team) {
+                    // Get projects associated with this team
+                    $projects = Project::where('team_id', $team->id)->get();
+                    // Get all employees associated with this team
+                    $employees = $team->employees;
+                } else {
+                    $projects = collect();  // Empty collection for projects
+                    $employees = collect();  // Empty collection for employees
+                }
+            } else {
+                // If the user doesn't have an employee record
+                $projects = collect();
+                $employees = collect();
+                $team = null;
             }
 
             return view('employee.task.task_create', compact('projects', 'team', 'employees'));

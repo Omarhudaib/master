@@ -4,13 +4,14 @@
 
 <div class="page-wrapper">
     <div class="page-breadcrumb">
+    
         <!-- Check if the user hasn't checked in yet -->
         @if($canCheckIn)
             <div class="alert alert-warning text-center">
                 You haven't checked in yet. Please check in to start your day.
             </div>
         @endif
-
+   <div class="row m-3">
         <!-- Blade view for the employee dashboard or wherever you want to place the button -->
         <form action="{{ route('daily_in_out.checkIn') }}" method="POST">
             @csrf
@@ -23,88 +24,129 @@
                 <button type="submit" class="btn btn-danger" id="checkOutButton">Check Out</button>
             </form>
         @endif
-
+        </div>
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-primary text-center"> <!-- Blue -->
+                                            <h1 class="font-light text-white">{{ $projects }}</h1>
+                                            <h6 class="text-white">Total Projects</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-danger text-center"> <!-- Red -->
+                                            <h1 class="font-light text-white">{{ $leaveRequests }}</h1>
+                                            <h6 class="text-white">Requests</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-success text-center"> <!-- Green -->
+                                            <h1 class="font-light text-white">{{ $annual_vacation_days }}</h1>
+                                            <h6 class="text-white">Annual Vacation Days</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-warning text-center"> <!-- Yellow -->
+                                            <h1 class="font-light text-white">{{ $sick_vacation }}</h1>
+                                            <h6 class="text-white">Sick Leaves</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Ticket Metrics -->
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-primary text-center">
-                                        <h1 class="font-light text-white">{{ $tickets->count() }}</h1>
-                                        <h6 class="text-white">Total Tickets</h6>
+                            <div class="row mt-4">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-info text-center"> <!-- Light Blue -->
+                                            <h1 class="font-light text-white">{{ $tickets->count() }}</h1>
+                                            <h6 class="text-white">Total Tickets</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-secondary text-center"> <!-- Grey -->
+                                            <h1 class="font-light text-white">{{ $responded }}</h1>
+                                            <h6 class="text-white">Responded</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-light text-center"> <!-- Light Grey -->
+                                            <h1 class="font-light text-dark">{{ $resolved }}</h1>
+                                            <h6 class="text-dark">Resolved</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-dark text-center"> <!-- Black -->
+                                            <h1 class="font-light text-white">{{ $pending }}</h1>
+                                            <h6 class="text-white">Pending</h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-cyan text-center">
-                                        <h1 class="font-light text-white">{{ $responded }}</h1>
-                                        <h6 class="text-white">Responded</h6>
+                            <!-- Task Status Summary -->
+                            <div class="row mt-4">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-warning text-center"> <!-- Yellow -->
+                                            <h1 class="font-light text-white">{{ $pendingTasks }}</h1>
+                                            <h6 class="text-white">Pending Tasks</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-info text-center"> <!-- Light Blue -->
+                                            <h1 class="font-light text-white">{{ $inProgressTasks }}</h1>
+                                            <h6 class="text-white">In Progress Tasks</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-success text-center"> <!-- Green -->
+                                            <h1 class="font-light text-white">{{ $completedTasks }}</h1>
+                                            <h6 class="text-white">Completed Tasks</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card card-hover">
+                                        <div class="p-2 bg-danger text-center"> <!-- Red -->
+                                            <h1 class="font-light text-white">{{ $leaveRequests }}</h1>
+                                            <h6 class="text-white">Requests</h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-success text-center">
-                                        <h1 class="font-light text-white">{{ $resolved }}</h1>
-                                        <h6 class="text-white">Resolved</h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-danger text-center">
-                                        <h1 class="font-light text-white">{{ $pending }}</h1>
-                                        <h6 class="text-white">Pending</h6>
-                                    </div>
-                                </div>
-                            </div>
-                       </div>
-
-
-                        <!-- Task Status Summary -->
-                        <div class="row mt-4">
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-warning text-center">
-                                        <h1 class="font-light text-white">{{ $pendingTasks }}</h1>
-                                        <h6 class="text-white">Pending Tasks</h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-info text-center">
-                                        <h1 class="font-light text-white">{{ $inProgressTasks }}</h1>
-                                        <h6 class="text-white">In Progress Tasks</h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-success text-center">
-                                        <h1 class="font-light text-white">{{ $completedTasks }}</h1>
-                                        <h6 class="text-white">Completed Tasks</h6>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card card-hover">
-                                    <div class="p-2 bg-success text-center">
-                                        <h1 class="font-light text-white">{{ $leaveRequests }}</h1>
-                                        <h6 class="text-white">Requests</h6>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                     </div>
@@ -128,7 +170,7 @@
                                                             <th>Team Name</th>
                                                             <th>Team Leader</th>
                                                             <th>Employee Name</th>
-                                                            <th>Date</th>
+
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -136,18 +178,18 @@
                                                             <tr>
                                                                 <td rowspan="{{ $team->employees->count() }}">{{ $team->id }}</td>
                                                                 <td rowspan="{{ $team->employees->count() }}">{{ $team->name }}</td>
-                                                                <td rowspan="{{ $team->employees->count() }}">{{ $team->teamLeader->name ?? 'No Leader' }}</td>
+                                                                <td rowspan="{{ $team->employees->count() }}">{{ $team->teamLeader->first_name ?? 'No Leader' }}</td>
 
                                                                 <!-- Loop through employees in the same team -->
                                                                 @foreach($team->employees as $index => $employee)
                                                                     @if($index == 0)
-                                                                        <td>{{ $employee->name }}</td>
-                                                                        <td>{{ $employee->pivot->created_at }}</td>
+                                                                        <td>{{ $employee->first_name }}</td>
+
                                                                     </tr>
                                                                     @else
                                                                     <tr>
-                                                                        <td>{{ $employee->name }}</td>
-                                                                        <td>{{ $employee->pivot->created_at }}</td>
+                                                                        <td>{{ $employee->first_name }}</td>
+
                                                                     </tr>
                                                                     @endif
                                                                 @endforeach
