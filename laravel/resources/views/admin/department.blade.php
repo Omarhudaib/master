@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('departments.create') }}" method="POST">
+                        <form action="{{ route('departmentsd.create') }}" method="POST">
                             @csrf
                             <div class="form-group">
                                 <label for="name">Department Name:</label>

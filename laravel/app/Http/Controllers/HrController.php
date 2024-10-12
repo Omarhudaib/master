@@ -12,9 +12,12 @@ use App\Models\LeaveRequest;
 use App\Models\Meeting;
 use App\Models\Message;
 use App\Models\Position;
+use App\Models\Post;
+use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\Team;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -145,11 +148,69 @@ public function showall()
     $roles = Role::all();
     $positions = Position::all();
     $teams = Team::all();
+    $totalEmployees = Employee::count();
+    $totalProjects = Project::count();
+    $totalTasks = Task::count();
+    $totalDepartments = Department::count();
+    $totalLeaveRequests = LeaveRequest::count();
+    $totalCheckIns = DailyInOut::whereNotNull('check_in')->count(); // Count only the records with a check-in
+    $pendingTasks = Task::where('status', 'Pending')->count(); // Count only the pending tasks
+    $pendingTicket = Ticket::where('status', 'Pending')->count();
+    // Fetch the authenticated employee ID
+    $employeeId = auth()->user()->employee->id;
 
+    // Get the latest check-in record
+    $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
+                                ->orderBy('check_in', 'desc')
+                                ->first();
+
+    // Determine if the user can check in or check out
+    $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
+    $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
+
+    // Fetch data with pagination
+    $employees = Employee::paginate(20);
+    $tasks = Task::paginate(20);
+    $departments = Department::paginate(20);
+    $positions = Position::paginate(20);
+    $leaveRequests = LeaveRequest::paginate(20);
+    $dailyInOuts = DailyInOut::paginate(20);
+    $teams = Team::with(['leader', 'projects', 'employees'])->get();
+
+    // Fetch active projects (for example, those not completed)
+    $plannedProjects = Project::where('status', 'Planned')->count(); // Adjust the condition as per your logic
+    $activeProjects = Project::where('status', 'In Progress')->count();
+    $doneProjects = Project::where('status', 'Completed')->count();
+    // Fetch the latest posts
+    $posts = Post::latest()->paginate(5); // Fetch the latest 5 posts
+    $meetings = Meeting::where('meeting_date', '>', now())->count();
     return view('hr.home_hr_dsah', compact(
         'latestCheckIn', 'canCheckIn', 'canCheckOut',
         'employees', 'roles', 'departments', 'positions', 'teams',
-        'employeeCount', 'pendingLeaveRequestCount', 'teamCount', 'departmentCount', 'checkedInEmployees'
+        'employeeCount', 'pendingLeaveRequestCount', 'teamCount', 'departmentCount', 'checkedInEmployees', 'latestCheckIn',
+        'canCheckIn',
+        'canCheckOut',
+        'employees',
+        'doneProjects',
+        'plannedProjects',
+        'pendingTicket',
+        'tasks',
+        'teams',
+        'departments',
+        'positions',
+        'leaveRequests',
+        'dailyInOuts',
+        'totalEmployees',
+        'totalProjects',
+        'totalTasks',
+        'totalDepartments',
+        'totalLeaveRequests',
+        'totalCheckIns',
+        'activeProjects',
+        'pendingTasks',
+        'posts',
+        'meetings'
+         // Add posts to the data being passed to the view
     ));
 }
 
@@ -280,7 +341,7 @@ public function update(Request $request, $id)
         'team_id' => 'nullable|exists:teams,id',
         'salary' => 'nullable|numeric',
         'date_of_birth' => 'nullable|date',
-       'hire_ date' => 'nullable|date',
+        'hire_date' => 'nullable|date',
         'national_id' => 'nullable|string|max:255',
         'marital_status' => 'nullable|in:single,married',
         'phone_number' => 'nullable|string|max:20',

@@ -69,29 +69,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group mt-3">
-                                <label for="related_employee_id">Related Employee:</label>
-                                <select name="related_employee_id[]" id="related_employee_id" class="form-control" multiple>
-                                    <option value="">Select Related Employee(s)</option>
-                                    @foreach($employees as $employee)
-                                        <option value="{{ $employee->id }}" {{ in_array($employee->id, old('related_employee_id', [])) ? 'selected' : '' }}>
-                                            {{ $employee->first_name }} {{ $employee->last_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group mt-3">
-                                <label for="relation_type">Relation Type:</label>
-                                <select name="relation_type[]" id="relation_type" class="form-control" multiple>
-                                    <option value="">Select Relation Type</option>
-                                    <option value="Manager" {{ in_array('Manager', old('relation_type', [])) ? 'selected' : '' }}>Manager</option>
-                                    <option value="Supervisor" {{ in_array('Supervisor', old('relation_type', [])) ? 'selected' : '' }}>Supervisor</option>
-                                    <option value="Mentor" {{ in_array('Mentor', old('relation_type', [])) ? 'selected' : '' }}>Mentor</option>
-                                    <option value="Peer" {{ in_array('Peer', old('relation_type', [])) ? 'selected' : '' }}>Peer</option>
-                                </select>
-                            </div>
-
+                     
                             <div class="form-group mt-3">
                                 <label for="salary">Salary:</label>
                                 <input type="number" step="0.01" name="salary" id="salary" class="form-control" value="{{ old('salary') }}">

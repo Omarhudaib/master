@@ -1,5 +1,4 @@
 @include('layouts.dash')
-
 <div class="page-wrapper">
     <div class="page-breadcrumb">
         <div class="row">
@@ -60,8 +59,6 @@
         </form>
     </div>
 </div>
-
-
 <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
 <script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
@@ -77,15 +74,12 @@
 <script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js') }}"></script>
 <script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js') }}"></script>
 <script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
-
 <script>
     $(document).ready(function() {
         $('#project_id').change(function() {
             var projectId = $(this).val();
-
             // Clear the employee dropdown
             $('#employee_id').html('<option value="" disabled selected>Select an employee</option>');
-
             if (projectId) {
                 $.ajax({
                     url: '{{ url('fetch-employees') }}/' + projectId,
@@ -100,6 +94,5 @@
         });
     });
 </script>
-
 </body>
 </html>

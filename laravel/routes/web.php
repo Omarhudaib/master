@@ -198,7 +198,7 @@ Route::delete('/requestsd/{request}', [AdminController::class, 'destroyreq'])->n
 
 
 Route::get('/departmentsd', [AdminController::class, 'indexDepartment'])->name('departments.index');
-Route::post('/departmentsd', [AdminController::class, 'createDepartment'])->name('departments.create');
+Route::post('/departmentsd', [AdminController::class, 'createDepartment'])->name('departmentsd.create');
 
 
 Route::get('/posts', [AdminController::class, 'indexpost'])->name('posts.index');

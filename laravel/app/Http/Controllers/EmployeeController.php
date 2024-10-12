@@ -432,7 +432,7 @@ public function listTasks()
 
             if ($employee) {
                 // Check if the employee is a team leader
-                $team = $employee->teams()->where('team_leader_id', $employee->id)->first();
+                $team = $employee->teams_leader()->where('team_leader_id', $employee->id)->first();
 
                 if ($team) {
                     // Get projects associated with this team

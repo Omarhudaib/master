@@ -6,7 +6,11 @@
             <div class="col-12">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Add Task</h4>
+                </div>                   @if(session('success'))
+                <div class="alert alert-success mt-4">
+                    {{ session('success') }}
                 </div>
+            @endif
                 <div class="card">
                     <div class="card-body">
                         <form action="{{ route('tasks.store') }}" method="POST">

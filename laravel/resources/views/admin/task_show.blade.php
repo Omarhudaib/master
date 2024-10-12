@@ -6,16 +6,15 @@
             <h2>Task Details</h2>
         </div>
             <div class="row">
-            <div class="card">
+            <div class="card col-md-12">
                 <div class="card-body">
                     <h4>Task: {{ $task->title }}</h4>
                     <p><strong>Project:</strong> {{ $task->project->name ?? 'N/A' }}</p>
                     <p><strong>Employee:</strong> {{ $task->employee->first_name ?? 'N/A' }} {{ $task->employee->last_name ?? 'N/A' }}</p>
                     <p><strong>Description:</strong> {{ $task->description ?? 'N/A' }}</p>
-                    <p><strong>Due Date:</strong> {{ $task->due_date ? $task->due_date->format('Y-m-d') : 'N/A' }}</p>
+                    <p><strong>Due Date:</strong> {{ $task->due_date ? $task->due_date: 'N/A' }}</p>
                     <p><strong>Status:</strong> {{ $task->status }}</p>
 
-                    <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning">Edit Task</a>
 
                     <form action="{{ route('tasks.delete', $task->id) }}" method="POST" style="display:inline;">
                         @csrf

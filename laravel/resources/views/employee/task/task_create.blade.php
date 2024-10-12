@@ -1,5 +1,4 @@
 @include('layout.dsah')
-
 <div class="page-wrapper">
     <div class="page-breadcrumb">
         <div class="row">
@@ -22,7 +21,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
                             <div class="form-group">
                                 <label for="employee_id">Employee:</label>
                                 <select name="employee_id" id="employee_id" class="form-control" required>
@@ -34,14 +32,12 @@
                                     @endforeach
                                 </select>
                             </div>
-
                             @if($team)
                                 <input type="hidden" name="team_id" id="team_id" value="{{ $team->id }}">
                             @else
                                 <input type="hidden" name="team_id" id="team_id" value="">
                                 <p class="text-danger">You are not part of any team.</p>
                             @endif
-
                             <div class="form-group">
                                 <label for="title">Title:</label>
                                 <input type="text" name="title" id="title" class="form-control" required>
@@ -62,35 +58,28 @@
                                     <option value="Completed">Completed</option>
                                 </select>
                             </div>
-
                             <button type="submit" class="btn btn-primary">Create Task</button>
                         </form>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <script>
     document.getElementById('project_id').addEventListener('change', function () {
         const projectId = this.value;
         const employeeSelect = document.getElementById('employee_id');
         const options = employeeSelect.options;
-
         // Reset employee selection
         employeeSelect.selectedIndex = 0;
-
         // Show only employees related to the selected project
         for (let i = 0; i < options.length; i++) {
             options[i].style.display = 'block';  // Ensure all employees can be seen in this case
         }
     });
 </script>
-
 </div>
-
 <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
 <script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
@@ -106,6 +95,5 @@
 <script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js') }}"></script>
 <script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js') }}"></script>
 <script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
-
 </body>
 </html>
