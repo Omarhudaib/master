@@ -201,8 +201,17 @@ Route::get('/departmentsd', [AdminController::class, 'indexDepartment'])->name('
 Route::post('/departmentsd', [AdminController::class, 'createDepartment'])->name('departments.create');
 
 
+Route::get('/posts', [AdminController::class, 'indexpost'])->name('posts.index');
 
+// Route for displaying the form to create a new post
+Route::get('/posts/create', [AdminController::class, 'createpost'])->name('posts.create');
 
+// Route for storing a new post
+Route::post('/posts', [AdminController::class, 'storepost'])->name('posts.store');
+Route::get('posts/{post}', [AdminController::class, 'showpost'])->name('posts.show');
+Route::get('posts/{post}/edit', [AdminController::class, 'editpost'])->name('posts.edit');
+Route::put('posts/{post}', [AdminController::class, 'updatepost'])->name('posts.update');
+Route::delete('posts/{post}', [AdminController::class, 'destroypost'])->name('posts.destroy');
 
 
 // Route for displaying all meetings

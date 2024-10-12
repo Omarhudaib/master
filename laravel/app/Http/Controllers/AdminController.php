@@ -9,12 +9,13 @@ use App\Models\Erequest;
 use App\Models\LeaveRequest;
 use App\Models\Meeting;
 use App\Models\Position;
+use App\Models\Post;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\Team;
-use App\Models\Ticket;
 
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -88,18 +89,17 @@ public function updateStatusreq(Request $request, $id)
             $erequest->delete();
             return redirect()->route('requests.index')->with('success', 'Request deleted successfully.');
         }
-
         public function index()
         {
-            // Fetch data with pagination
-            $employees = Employee::paginate(20);
-            $tasks = Task::paginate(20);
-            $departments = Department::paginate(20);
-            $positions = Position::paginate(20);
-            $leaveRequests = LeaveRequest::paginate(20);
-            $dailyInOuts = DailyInOut::paginate(20);
-            $teams = Team::with(['leader', 'projects', 'employees'])->get();
-
+            // Fetch totals for the dashboard
+            $totalEmployees = Employee::count();
+            $totalProjects = Project::count();
+            $totalTasks = Task::count();
+            $totalDepartments = Department::count();
+            $totalLeaveRequests = LeaveRequest::count();
+            $totalCheckIns = DailyInOut::whereNotNull('check_in')->count(); // Count only the records with a check-in
+            $pendingTasks = Task::where('status', 'Pending')->count(); // Count only the pending tasks
+            $pendingTicket = Ticket::where('status', 'Pending')->count();
             // Fetch the authenticated employee ID
             $employeeId = auth()->user()->employee->id;
 
@@ -112,17 +112,107 @@ public function updateStatusreq(Request $request, $id)
             $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
             $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
 
-            // Calculate total counts
-            $totalEmployees = Employee::count();
-            $totalProjects = Project::count();
-            $totalTasks = Task::count();
-            $totalDepartments = Department::count();
-            $totalLeaveRequests = LeaveRequest::count(); // Add this line for leave requests
+            // Fetch data with pagination
+            $employees = Employee::paginate(20);
+            $tasks = Task::paginate(20);
+            $departments = Department::paginate(20);
+            $positions = Position::paginate(20);
+            $leaveRequests = LeaveRequest::paginate(20);
+            $dailyInOuts = DailyInOut::paginate(20);
+            $teams = Team::with(['leader', 'projects', 'employees'])->get();
 
-            // Pass totals to the view along with the data
-            return view('admin.home_admin', compact('latestCheckIn', 'canCheckIn', 'canCheckOut', 'employees', 'tasks', 'teams', 'departments', 'positions', 'leaveRequests', 'dailyInOuts', 'totalEmployees', 'totalProjects', 'totalTasks', 'totalDepartments', 'totalLeaveRequests')); // Pass $totalLeaveRequests
+            // Fetch active projects (for example, those not completed)
+            $plannedProjects = Project::where('status', 'Planned')->count(); // Adjust the condition as per your logic
+            $activeProjects = Project::where('status', 'In Progress')->count();
+            $doneProjects = Project::where('status', 'Completed')->count();
+            // Fetch the latest posts
+            $posts = Post::latest()->paginate(5); // Fetch the latest 5 posts
+            $meetings = Meeting::where('meeting_date', '>', now())->count();
+            // Pass totals and other necessary data to the view
+            return view('admin.home_admin', compact(
+                'latestCheckIn',
+                'canCheckIn',
+                'canCheckOut',
+                'employees',
+                'doneProjects',
+                'plannedProjects',
+                'pendingTicket',
+                'tasks',
+                'teams',
+                'departments',
+                'positions',
+                'leaveRequests',
+                'dailyInOuts',
+                'totalEmployees',
+                'totalProjects',
+                'totalTasks',
+                'totalDepartments',
+                'totalLeaveRequests',
+                'totalCheckIns',
+                'activeProjects',
+                'pendingTasks',
+                'posts',
+                'meetings'
+                 // Add posts to the data being passed to the view
+            ));
         }
 
+
+        public function indexpost()
+        {
+            $posts = Post::with('user')->paginate(10);
+            return view('admin.posts', compact('posts'));
+        }
+
+        public function createpost()
+        {
+            return view('admin.posts_create');
+        }
+
+        public function storepost(Request $request)
+        {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+            ]);
+
+            Post::create([
+                'user_id' => auth()->id(),
+                'title' => $request->title,
+                'content' => $request->content,
+            ]);
+
+            return redirect()->route('posts.index')->with('success', 'Post created successfully.');
+        }
+
+        public function editpost(Post $post)
+        {
+            return view('admin.posts_edit', compact('post'));
+        }
+
+        public function updatepost(Request $request, Post $post)
+        {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+            ]);
+
+            $post->update([
+                'title' => $request->title,
+                'content' => $request->content,
+            ]);
+
+            return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+        }
+        public function showpost(Post $post)
+        {
+            return view('admin.posts_show', compact('post'));
+        }
+        public function destroypost(Post $post)
+        {
+            $post->delete();
+            return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
+        }
 
 
 

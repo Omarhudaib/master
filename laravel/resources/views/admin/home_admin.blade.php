@@ -9,7 +9,7 @@
             </div>
         @endif
 
-        <div class="row m-3">
+        <div class="row">
             <!-- Check-in Button -->
             <form action="{{ route('daily_in_out.checkIn') }}" method="POST" class="mr-2">
                 @csrf
@@ -18,7 +18,7 @@
 
             <!-- Check-out Button -->
             @if($canCheckOut)
-                <form action="{{ route('daily_in_out.checkOut') }}" method="POST">
+                <form action="{{ route('daily_in_out.checkOut') }}" method="POST" class="mr-2">
                     @csrf
                     <button type="submit" class="btn btn-danger" id="checkOutButton">Check Out</button>
                 </form>
@@ -29,94 +29,97 @@
     <!-- Dashboard Summary Section -->
     <div class="container-fluid">
         <div class="row">
-            <!-- Card for Total Employees -->
-            <div class="col-md-3">
-                <div class="card card-hover">
-                    <div class="p-2 bg-primary text-center">
-                        <h4 class="font-light text-white">{{ $totalEmployees }}</h4>
-                        <h6 class="text-white">Total Employees</h6>
+            <!-- Summary Cards -->
+            @foreach ([
+              ['Total Employees', $totalEmployees, 'bg-primary'], // Blue
+    ['Total Projects', $totalProjects, 'bg-success'], // Green
+    ['Total Tasks', $totalTasks, 'bg-warning'], // Yellow
+    ['Total Departments', $totalDepartments, 'bg-info'], // Light Blue
+    ['Leave Requests', $totalLeaveRequests, 'bg-danger'], // Red
+    ['Active Projects', $activeProjects, 'bg-dark'], // Dark
+    ['Done Projects', $doneProjects, 'bg-secondary'], // Gray
+    ['Planned Projects', $plannedProjects, 'bg-success'], // Light Gray
+    ['Total Check-Ins', $totalCheckIns, 'bg-purple'], // Purple
+    ['Pending Tasks', $pendingTasks, 'bg-orange'], // Orange
+    ['Meetings', $meetings, 'bg-info'], // Teal
+    ['Pending Tickets', $pendingTicket, 'bg-warning'], // Pink
+            ] as [$title, $count, $bgClass])
+                <div class="col-md-3 mt-3">
+                    <div class="card card-hover">
+                        <div class="p-2 {{ $bgClass }} text-center">
+                            <h4 class="font-light text-white">{{ $count }}</h4>
+                            <h6 class="text-white">{{ $title }}</h6>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Card for Total Projects -->
-            <div class="col-md-3">
-                <div class="card card-hover">
-                    <div class="p-2 bg-success text-center">
-                        <h4 class="font-light text-white">{{ $totalProjects }}</h4>
-                        <h6 class="text-white">Total Projects</h6>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card for Total Tasks -->
-            <div class="col-md-3">
-                <div class="card card-hover">
-                    <div class="p-2 bg-warning text-center">
-                        <h4 class="font-light text-white">{{ $totalTasks }}</h4>
-                        <h6 class="text-white">Total Tasks</h6>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card for Total Departments -->
-            <div class="col-md-3">
-                <div class="card card-hover">
-                    <div class="p-2 bg-info text-center">
-                        <h4 class="font-light text-white">{{ $totalDepartments }}</h4>
-                        <h6 class="text-white">Total Departments</h6>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card for Total Leave Requests -->
-            <div class="col-md-3 mt-3">
-                <div class="card card-hover">
-                    <div class="p-2 bg-danger text-center">
-                        <h4 class="font-light text-white">{{ $totalLeaveRequests }}</h4>
-                        <h6 class="text-white">Leave Requests</h6>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
-
-        <!-- Teams Section -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <h2>Teams</h2>
-                <div class="table-responsive">
-                    <table class="table no-wrap v-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>Team Name</th>
-                                <th>Team Leader</th>
-                                <th>Project Name</th>
-                                <th>End Date</th>
-                                <th>Employees</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($teams as $team)
-                            <tr>
-                                <td>{{ $team->name }}</td>
-                                <td>{{ $team->leader->name ?? 'No leader assigned' }}</td>
-                                <td>{{ $team->projects->isNotEmpty() ? $team->projects->first()->name : 'No projects' }}</td>
-                                <td>{{ $team->projects->isNotEmpty() ? $team->projects->first()->end_date : 'N/A' }}</td>
-                                <td>{{ $team->employees->isNotEmpty() ? $team->employees->count() : 'No employees' }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- Teams Section -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Teams</h2>
+   <div class="table-responsive">
+        <table class="table table-hover table-warning">
+            <thead class="bg-warning text-white">
+                    <tr>
+                        <th>Team Name</th>
+                        <th>Team Leader</th>
+                        <th>Project Name</th>
+                        <th>End Date</th>
+                        <th>Employees</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($teams as $team)
+                        <tr>
+                            <td>{{ $team->name }}</td>
+                            <td>{{ $team->leader->name ?? 'No leader assigned' }}</td>
+                            <td>{{ $team->projects->isNotEmpty() ? $team->projects->first()->name : 'No projects' }}</td>
+                            <td>{{ $team->projects->isNotEmpty() ? $team->projects->first()->end_date: 'N/A' }}</td>
+                            <td>{{ $team->employees->isNotEmpty() ? $team->employees->count() : 'No employees' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-
-        <!-- Daily In/Out Section -->
-        <div class="row mt-4">
-            <!-- Continue with your daily in/out table as before -->
+    </div>
+ </div>
+    <!-- Posts Section -->
+    <div class="col-md-12">
+        <h2>Recent Posts</h2>
+        <p class="text-muted">Stay updated with the latest posts from your team.</p>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="bg-info text-white">
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Content</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($posts as $post)
+                        <tr>
+                            <td>
+                              {{ $post->title }}
+                            </td>
+                            <td>{{ $post->user->name ?? 'Unknown' }}</td>
+                            <td>{{ $post->content}}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Links -->
+        <div class="mt-2">
+            {{ $posts->links() }}
         </div>
     </div>
 </div>
+
+    </div>
+</div>
+
 
 <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>

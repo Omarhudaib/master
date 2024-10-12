@@ -6,15 +6,10 @@
             <div class="col-md-12">
                 <h2 class="text-center mb-4">Teams</h2>
 
-                <!-- Card for creating new team -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Add New Team</h4>
-                    </div>
-                    <div class="card-body">
+
+                    <div class="card-body m-3">
                         <a href="{{ route('teams.create') }}" class="btn btn-info mb-3">Add Team</a>
-                    </div>
-                </div>
+
 
                 <!-- Card for displaying list of teams -->
                 <div class="card shadow-sm">

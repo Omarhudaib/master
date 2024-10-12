@@ -201,9 +201,7 @@
                                 <span class="hide-menu">Dashboard</span>
                             </a>
                         </li>
-                        <li class="list-divider"></li>
-                        <li class="nav-small-cap"><span class="hide-menu">Applications</span></li>
-
+                      
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('employees') }}" aria-expanded="false">
                                 <i class="fas fa-child"></i>
@@ -227,14 +225,19 @@
                                 <i class="icon-docs"></i>
                                 <span class="hide-menu">Departments</span>
                             </a>
-                        </li>
+                          </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('tasks.index') }}" aria-expanded="false">
                                 <i class="fas fa-tasks"></i> <!-- Icon for Tasks -->
                                 <span class="hide-menu">Tasks</span>
                             </a>
                         </li>
-        
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('posts.index') }}" aria-expanded="false">
+                                <i class="fas fa-tasks"></i> <!-- Icon for Tasks -->
+                                <span class="hide-menu">Posts</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('meetings.index') }}" aria-expanded="false">
                                 <i class="fas fa-calendar-alt"></i> <!-- Icon for Meetings -->
