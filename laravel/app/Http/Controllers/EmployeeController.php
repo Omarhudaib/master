@@ -1,20 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
+use App\Models\DailyInOut;
+use App\Models\Department;
+use App\Models\Employee;
+use App\Models\LeaveRequest;
+use App\Models\Message;
+use App\Models\Position;
+use App\Models\Post;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\Ticket;
-use App\Models\Message;
-use App\Models\Project;
-use App\Models\Employee;
-use App\Models\Position;
-use App\Models\DailyInOut;
-use App\Models\Department;
-use App\Models\LeaveRequest;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -25,12 +26,21 @@ class EmployeeController extends Controller
         $employee = Auth::user()->employee;
 
         // Get teams related to the authenticated employee
-        $teams = Team::with(['teamLeader', 'employees'])->get();
+        // Here, we're using 'with' to load the team leader for each team.
+        $teams = $employee->teams()->with('teamLeader')->get();
 
         // Get the latest check-in record for the employee
         $latestCheckIn = DailyInOut::where('employee_id', $employee->id)
                                     ->orderBy('check_in', 'desc')
                                     ->first();
+
+        // Get the position and department names
+        $pos = Position::find($employee->position_id);  // Get the position name
+        $deb = Department::find($employee->department_id);  // Get the department name
+
+        // Get the first team associated with the employee
+        $team = $employee->teams()->first();
+        $team_leader = $team ? $team->teamLeader : null; // Assuming teamLeader returns an Employee instance
 
         // Determine if the user can check in or check out
         $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
@@ -69,7 +79,7 @@ class EmployeeController extends Controller
 
         // Return the view with the necessary data
         return view('employee.home_employee', compact(
-            'teams',
+            'teams', // Ensure this is included
             'leaveRequests',
             'latestCheckIn',
             'canCheckIn',
@@ -84,7 +94,10 @@ class EmployeeController extends Controller
             'completedTasks',
             'projects',
             'annual_vacation_days',
-            'sick_vacation'
+            'sick_vacation',
+            'pos',
+            'deb',
+            'team_leader'
         ));
     }
 
@@ -312,11 +325,16 @@ public function updateStatusti(Request $request, $id)
 
      return redirect()->route('leave_requests_index')->with('success', 'Leave request created successfully.');
  }
-
+ public function indexposts()
+ {
+     $posts = Post::with('user')->paginate(10);
+// Fetch the messages
+     return view('employee.posts', compact('posts',)); // Pass both posts and messages
+ }
  public function indexre()
  {
      // Get the authenticated employee's ID
-     $employeeId = auth()->id();
+     $employeeId = auth()->user()->employee->id;
 
      // Retrieve all leave requests for the authenticated employee
      $leaveRequests = LeaveRequest::where('employee_id', $employeeId)->get();
@@ -471,7 +489,7 @@ public function listTasks()
 
             // Ensure employee is part of the project's team
             if (!$project->team->employees->contains($request->employee_id)) {
-                return back()->withErrors(['employee_id' => 'Selected employee is not part of the project team']);
+                return back()->withErrors(['employee_id' => 'you are not team leader']);
             }
             Task::create($request->all());
 
@@ -506,7 +524,7 @@ public function listTasks()
             ]);
 
             // Check if the user is a team leader of the selected team
-            $user = auth()->user();
+            $user = auth()->user()->employee->id;
             $team = Team::find($request->team_id);
             if (!$team || $team->teamLeader->id !== $user->id) {
                 return redirect()->back()->with('error', 'You are not authorized to update tasks for this team.');

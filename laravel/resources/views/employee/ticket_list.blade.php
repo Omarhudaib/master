@@ -6,7 +6,6 @@
             <div class="col-md-12">
                 <h2 class=" mb-4">Tickets</h2>
 
-                <a href="{{ route('ticketse.create') }}" class="btn btn-primary mb-4">Create New Ticket</a>
 
                 <div class="card shadow-sm">
                     <div class="card-body">
@@ -77,7 +76,7 @@
                                             <td>{{ $ticket->subject }}</td>
                                            <td>{{ $ticket->id }}</td>
                                             <td>{{ $ticket->description }}</td>
-                                        <td>{{ $ticket->agent }}</td>
+
                                             <td>
                                                 <form action="{{ route('updateTicket', $ticket->id) }}" method="POST">
                                                     @csrf

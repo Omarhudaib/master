@@ -99,7 +99,7 @@ Route::put('/tickete/{ticket}', [EmployeeController::class, 'updateTicket'])->na
 Route::delete('/tickete/{ticket}', [EmployeeController::class, 'destroyTicket'])->name('ticketse.destroy');
 
 
-
+Route::get('/postsem', [EmployeeController::class, 'indexposts'])->name('postsem.index');
 
 
 
@@ -200,6 +200,7 @@ Route::delete('/requestsd/{request}', [AdminController::class, 'destroyreq'])->n
 Route::get('/departmentsd', [AdminController::class, 'indexDepartment'])->name('departments.index');
 Route::post('/departmentsd', [AdminController::class, 'createDepartment'])->name('departmentsd.create');
 
+Route::get('/postsall', [AdminController::class, 'indexposts'])->name('postsall.index');
 
 Route::get('/posts', [AdminController::class, 'indexpost'])->name('posts.index');
 
@@ -397,3 +398,4 @@ Route::put('/departmentsh/{id}', [HrController::class, 'updatede'])->name('depar
 
 
 
+Route::get('/postsh', [HrController::class, 'indexposts'])->name('postsh.index');

@@ -8,13 +8,14 @@ use App\Models\EmployeeRelation;
 use App\Models\Erequest;
 use App\Models\LeaveRequest;
 use App\Models\Meeting;
+use App\Models\Message;
 use App\Models\Position;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
-use App\Models\Team;
 
+use App\Models\Team;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -163,6 +164,13 @@ public function updateStatusreq(Request $request, $id)
             $posts = Post::with('user')->paginate(10);
             return view('admin.posts', compact('posts'));
         }
+        public function indexposts()
+        {
+            $posts = Post::with('user')->paginate(10);
+            $messages = Post::with('user')->paginate(10); // Fetch the messages
+            return view('admin.postsall', compact('posts', 'messages')); // Pass both posts and messages
+        }
+
 
         public function createpost()
         {

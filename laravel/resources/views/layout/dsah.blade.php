@@ -10,6 +10,11 @@
     <meta name="author" content="">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/favicon.png') }}">
     <title>Adminmart Template - The Ultimate Multipurpose admin template</title>
+    @guest
+    <script>
+        window.location.href = "{{ url('/') }}";
+    </script>
+@endguest
 
     <!-- Custom CSS -->
     <link href="{{ asset('assets/extra-libs/c3/c3.min.css') }}" rel="stylesheet">
@@ -153,7 +158,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
-                                <img src="{{ asset('assets/images/users/profile-pic.jpg') }}" alt="user" class="rounded-circle"
+                                <img src="{{ asset('assets/images/users/user.jpg') }}" alt="user" class="rounded-circle"
                                     width="40">
                                 <span class="ml-2 d-none d-lg-inline-block">
                                     <span>Hello,</span>
@@ -198,12 +203,17 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="sidebar-item">
-                            <a class="sidebar-link sidebar-link" href="{{ ('employee') }}" aria-expanded="false">
+                            <a class="sidebar-link sidebar-link" href="{{ route('employee') }}" aria-expanded="false">
                                 <i data-feather="home" class="feather-icon"></i>
                                 <span class="hide-menu">Dashboard</span>
                             </a>
                         </li>
-
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('postsem.index') }}" aria-expanded="false">
+                                <i class="fas fa-briefcase"></i> <!-- Icon for Positions -->
+                                <span class="hide-menu">All Post</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('ticket_list') }}" aria-expanded="false">
                                 <i data-feather="tag" class="feather-icon"></i>

@@ -42,7 +42,7 @@
                         @csrf
                         <div class="form-group">
                             <label for="employee_id">Employee</label>
-                            <input type="hidden" name="employee_id" id="employee_id" value="{{ auth()->id() }}">
+                            <input type="hidden" name="employee_id" id="employee_id" value="{{ auth()->user()->employee->id }}">
                             <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
                         </div>
                         <div class="form-group">

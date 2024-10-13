@@ -28,6 +28,7 @@ class Employee extends Model
         return $this->belongsTo(User::class);
     }
 
+
     // Relationship with Teams
    public function teams(): BelongsToMany
     {

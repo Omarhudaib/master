@@ -395,7 +395,12 @@ public function destroy($id)
 }
 
 
-
+public function indexposts()
+{
+    $posts = Post::with('user')->paginate(10);
+// Fetch the messages
+    return view('hr.posts', compact('posts',)); // Pass both posts and messages
+}
 
 
 public function checkIn()

@@ -10,6 +10,11 @@
     <meta name="author" content="">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/favicon.png') }}">
     <title>Adminmart Template - The Ultimate Multipurpose admin template</title>
+    @guest
+    <script>
+        window.location.href = "{{ url('/') }}";
+    </script>
+@endguest
 
     <!-- Custom CSS -->
     <link href="{{ asset('assets/extra-libs/c3/c3.min.css') }}" rel="stylesheet">
@@ -151,7 +156,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
-                                <img src="{{ asset('assets/images/users/profile-pic.jpg') }}" alt="user" class="rounded-circle"
+                                <img src="{{ asset('assets/images/users/user.jpg') }}" alt="user" class="rounded-circle"
                                     width="40">
                                 <span class="ml-2 d-none d-lg-inline-block">
                                     <span>Hello,</span>
@@ -220,6 +225,14 @@
                                 <span class="hide-menu">Salary Report</span>
                             </a>
                         </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('postsh.index') }}" aria-expanded="false">
+                                <i class="fas fa-dollar-sign"></i> <!-- Icon for Salary Report -->
+                                <span class="hide-menu">All Post</span>
+                            </a>
+                        </li>
+
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('tasksh.index') }}" aria-expanded="false">
                                 <i class="fas fa-tasks"></i> <!-- Icon for Tasks -->
