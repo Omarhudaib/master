@@ -239,17 +239,37 @@ public function updateStatusreq(Request $request, $id)
         }
 
 
+        public function showall(Request $request)
+        {
+            $query = Employee::with(['department', 'position', 'user', 'user.role', 'teams']);
 
-public function showall()
-{
-    $employees = Employee::with(['department', 'position', 'user', 'user.role', 'teams'])->paginate(20);
-    $roles = Role::all();
-    $departments = Department::all();
-    $positions = Position::all();
-    $teams = Team::all();
+            // Search by name or email
+            if ($request->filled('search')) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%')
+                      ->orWhere('email', 'like', '%' . $request->search . '%');
+                });
+            }
 
-    return view('admin.employees', compact('employees', 'roles', 'departments', 'positions', 'teams'));
-}
+            // Filter by department
+            if ($request->filled('department_id')) {
+                $query->where('department_id', $request->department_id);
+            }
+
+            // Filter by position
+            if ($request->filled('position_id')) {
+                $query->where('position_id', $request->position_id);
+            }
+
+            // Pagination
+            $employees = $query->paginate(20);
+            $roles = Role::all();
+            $departments = Department::all();
+            $positions = Position::all();
+            $teams = Team::all();
+
+            return view('admin.employees', compact('employees', 'roles', 'departments', 'positions', 'teams'));
+        }
 
 public function showemployee()
 {
@@ -843,7 +863,6 @@ public function editdep($id)
     $department = Department::findOrFail($id);
     return view('admin.department_edit', compact('department'));
 }
-
 public function updatedepartments(Request $request, $id)
 {
     // Validate the incoming request data
@@ -855,6 +874,7 @@ public function updatedepartments(Request $request, $id)
         'longitude' => 'required|numeric',
     ]);
 
+    // Find the department by ID
     $department = Department::find($id);
 
     // Check if the department exists
@@ -862,27 +882,35 @@ public function updatedepartments(Request $request, $id)
         return redirect()->route('departments.index')->with('error', 'Department not found.');
     }
 
+    // Update department details
     $department->name = $request->input('name');
     $department->description = $request->input('description');
 
-    // Ensure that $department->location returns a single instance
+    // Get the associated location (assuming a hasOne or belongsTo relationship)
     $location = $department->location;
 
-    if ($location) { // Check if location exists
+    if ($location) {
+        // Update existing location
         $location->name = $request->input('location_name');
         $location->latitude = $request->input('latitude');
         $location->longitude = $request->input('longitude');
-
         $location->save(); // Save the location instance
     } else {
-        // Handle the case when the location is not found (optional)
+        // Create a new location if none exists
+        $newLocation = new Location();
+        $newLocation->name = $request->input('location_name');
+        $newLocation->latitude = $request->input('latitude');
+        $newLocation->longitude = $request->input('longitude');
+        $newLocation->department_id = $department->id; // Link the new location to the department
+        $newLocation->save(); // Save the new location instance
     }
 
-    $department->save(); // Save the department instance
+    // Save the updated department instance
+    $department->save();
 
+    // Redirect back with a success message
     return redirect()->route('departments.index')->with('success', 'Department updated successfully');
 }
-
 
 
 

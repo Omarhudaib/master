@@ -8,6 +8,36 @@
 
                 <a href="{{ route('employees_add') }}" class="btn btn-info mb-3">Add Employee</a>
 
+                <!-- Search Bar -->
+                <form method="GET" action="{{ route('employees') }}" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" name="search" class="form-control" placeholder="Search by name or email" value="{{ request('search') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="department_id" class="form-control">
+                                <option value="">Select Department</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="position_id" class="form-control">
+                                <option value="">Select Position</option>
+                                @foreach($positions as $position)
+                                    <option value="{{ $position->id }}" {{ request('position_id') == $position->id ? 'selected' : '' }}>
+                                        {{ $position->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                    <button type="submit" class="btn btn-primary ml-3">Search</button>
+               </div>  </form>
+
                 <!-- Table Layout for Larger Screens -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
@@ -36,31 +66,27 @@
                                         <td>{{ $employee->department->name ?? 'N/A' }}</td>
                                         <td>{{ $employee->position->title ?? 'N/A' }}</td>
                                         <td>${{ number_format($employee->salary, 2) }}</td>
-
-                                            <td>
-                                                <div class="dropdown sub-dropdown show">
-                                                    <button class="btn btn-link text-muted dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
-                                                            <circle cx="12" cy="12" r="1"></circle>
-                                                            <circle cx="12" cy="5" r="1"></circle>
-                                                            <circle cx="12" cy="19" r="1"></circle>
-                                                        </svg>
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd1">
-                                                        <a class="dropdown-item" href="{{ route('employees.show', $employee->id) }}">Show</a>
-                                                        <a class="dropdown-item" href="{{ route('employees.edit', $employee->id) }}">Update</a>
-                                                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="dropdown-item" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Are you sure?')">
-                                                                Delete
-                                                            </button>
-                                                        </form>
-                                                    </div>
+                                        <td>
+                                            <div class="dropdown sub-dropdown show">
+                                                <button class="btn btn-link text-muted dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
+                                                        <circle cx="12" cy="12" r="1"></circle>
+                                                        <circle cx="12" cy="5" r="1"></circle>
+                                                        <circle cx="12" cy="19" r="1"></circle>
+                                                    </svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd1">
+                                                    <a class="dropdown-item" href="{{ route('employees.show', $employee->id) }}">Show</a>
+                                                    <a class="dropdown-item" href="{{ route('employees.edit', $employee->id) }}">Update</a>
+                                                    <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="dropdown-item" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Are you sure?')">
+                                                            Delete
+                                                        </button>
+                                                    </form>
                                                 </div>
-                                 
-
-
+                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach

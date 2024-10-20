@@ -14,7 +14,12 @@
     <link href="{{ asset('assets/libs/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('dist/css/style.min.css') }}" rel="stylesheet">
 </head>
+<style>
+    .nav-item .nav-link {
+    color: #221f22 !important; /* Darker color for nav links */
+}
 
+</style>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
@@ -45,6 +50,7 @@
             </ul>
         </div>
     </nav>
+    <hr>
 
     <div class="container mt-5">
         <h1 class="text-center">Job Offers</h1>

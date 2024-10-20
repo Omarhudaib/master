@@ -14,7 +14,7 @@
                     <div class="card-body">
                         <form action="{{ route('departmentsa.update', $department->id) }}" method="POST">
                             @csrf
-                            @method('PUT') <!-- Required for form update -->
+                            @method('PUT')
 
                             <!-- Department Name -->
                             <div class="form-group">
@@ -35,9 +35,6 @@
                                     value="{{ $department->locations && $department->locations->isNotEmpty() ? $department->locations->first()->name : '' }}" required>
                             </div>
 
-                            <!-- Map -->
-                            <div id="map" style="height: 400px; width: 100%;"></div>
-
                             <!-- Latitude and Longitude -->
                             <div class="form-group mt-3">
                                 <label for="latitude">Latitude:</label>
@@ -50,40 +47,27 @@
                                     value="{{ $department->locations && $department->locations->isNotEmpty() ? $department->locations->first()->longitude : '' }}" required readonly>
                             </div>
 
+                            <!-- Button to get current location -->
+                            <button type="button" id="getLocationBtn" class="btn btn-primary mt-3">Get Current Location</button>
+
                             <!-- Submit button -->
                             <button type="submit" class="btn btn-success mt-3">Update Department</button>
-
-                            <!-- Include Google Maps API -->
-                            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXWq0xpCAWzqJNm8gFsvb6qK3XSjwLJ68&callback=initMap" async defer></script>
-
-                            <script>
-                                function initMap() {
-                                    var initialLat = {{ $department->locations && $department->locations->isNotEmpty() ? $department->locations->first()->latitude : '0' }};
-                                    var initialLng = {{ $department->locations && $department->locations->isNotEmpty() ? $department->locations->first()->longitude : '0' }};
-
-                                    var map = new google.maps.Map(document.getElementById('map'), {
-                                        center: { lat: initialLat, lng: initialLng },
-                                        zoom: 15
-                                    });
-
-                                    // Create a new AdvancedMarkerElement
-                                    const marker = new google.maps.marker.AdvancedMarkerElement({
-                                        position: { lat: initialLat, lng: initialLng },
-                                        map: map,
-                                        draggable: true
-                                    });
-
-                                    // Update latitude and longitude values when the marker is moved
-                                    marker.addListener('dragend', function() {
-                                        var lat = marker.getPosition().lat();
-                                        var lng = marker.getPosition().lng();
-                                        document.getElementById('latitude').value = lat;
-                                        document.getElementById('longitude').value = lng;
-                                    });
-                                }
-
-                            </script>
                         </form>
+
+                        <script>
+                            document.getElementById('getLocationBtn').addEventListener('click', function() {
+                                if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(function(position) {
+                                        document.getElementById('latitude').value = position.coords.latitude;
+                                        document.getElementById('longitude').value = position.coords.longitude;
+                                    }, function(error) {
+                                        alert('Unable to retrieve your location');
+                                    });
+                                } else {
+                                    alert('Geolocation is not supported by this browser.');
+                                }
+                            });
+                        </script>
                     </div>
                 </div>
 

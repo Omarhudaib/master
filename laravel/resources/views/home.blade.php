@@ -20,15 +20,18 @@
         body {
             color: #323; /* Darker text color */
         }
-
-        /* Header styles */
+        .nav-item .nav-link {
+            color: #221f22 !important; /* Darker color for nav links */
+        }
+           /* Header styles */
         .header {
+            padding:0rem 12rem 0rem 12rem;
             margin: 0;
-            padding: 0;
+
             background-image: url('{{ asset('assets/images/big/auth-bg.jpg') }}');
             background-size: cover;
             background-position: left;
-            height: 85vh; /* Full viewport height */
+            height: 90vh; /* Full viewport height */
             display: flex;
             justify-content: center; /* Center content horizontally */
             align-items: center; /* Center content vertically */
@@ -37,11 +40,12 @@
 
         .header h1,
         .header p {
-            padding:6rem
+
+
             text-align: left; /* Align text to the left */
-            margin: 2rem; /* Remove default margins */
+            margin: 0rem; /* Remove default margins */
         }
-        .header button{margin: 0 10rem 0 10rem; }
+        .header h1{font-size:3rem}
 
         .content-section img {
             width: 100%; /* Full width */
@@ -69,7 +73,7 @@
             .header {
                 height: 60vh; /* Adjust header height for smaller screens */
             }
-
+            .header h1{font-size:2rem}
             .content-section {
                 height: auto; /* Allow content section to grow */
             }
@@ -112,8 +116,11 @@
     <div class="header">
         <div>
             <h1 class="display-4">Welcome to Our HR & Employee Relations System</h1>
+            <br>
+            <br>
+
             <p class="lead">Our platform simplifies employee management, task assignments, and improves communication between employees and management.</p>
-            <a href="{{ route('login') }}" class="btn btn-primary">Get Started</a>
+          <br>  <a href="{{ route('login') }}" class="btn btn-primary">Get Started</a>
         </div>
     </div>
 
@@ -139,7 +146,7 @@
             </div>
         </div>
 
-        <div class="content-section h-80" id="About Our System" >
+        <div class="content-section h-80 " id="About Our System" >
             <h1 class="feature-text" style="text-align: center">About Our System</h1>
             <div class="row">
                 <div class="col-md-6" >
