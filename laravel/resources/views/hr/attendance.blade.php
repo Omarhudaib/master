@@ -4,12 +4,13 @@
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-md-12">
+                 <h1 class="text-center mb-4">Employee Attendance</h1>
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Create New Department</h4>
+                        <h4 class="mb-0">Employee Attendance</h4>
                     </div>
                     <div class="card-body">
-                    <h1 class="my-4">Employee Attendance</h1>
+
                     <table class="table">
                         <thead>
                             <tr>
@@ -36,13 +37,4 @@
         </div>
     </div>
 </div>
-
-<!-- JavaScript -->
-<script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
-<script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('dist/js/app-style-switcher.js') }}"></script>
-<script src="{{ asset('dist/js/feather.min.js') }}"></script>
-<script src="{{ asset('assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}"></script>
-<script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
-<script src="{{ asset('dist/js/custom.min.js') }}"></script>
+@include('layout.Footer')

@@ -18,7 +18,7 @@
 
     <style>
         body {
-            color: #333; /* Darker text color */
+            color: #323; /* Darker text color */
         }
 
         /* Header styles */
@@ -37,6 +37,7 @@
 
         .header h1,
         .header p {
+            padding:6rem
             text-align: left; /* Align text to the left */
             margin: 2rem; /* Remove default margins */
         }

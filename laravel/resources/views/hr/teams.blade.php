@@ -85,13 +85,28 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{{ route('teamsh.edit', $team->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                            <form action="{{ route('teamsh.destroy', $team->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            </form>
+                                            <div class="dropdown">
+                                                <button class="btn btn-link text-muted dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
+                                                        <circle cx="12" cy="12" r="1"></circle>
+                                                        <circle cx="12" cy="5" r="1"></circle>
+                                                        <circle cx="12" cy="19" r="1"></circle>
+                                                    </svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                    <!-- Edit Option -->
+                                                    <a class="dropdown-item" href="{{ route('teamsh.edit', $team->id) }}">Edit</a>
+
+                                                    <!-- Delete Option -->
+                                                    <form action="{{ route('teamsh.destroy', $team->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
+                                       
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -123,25 +138,4 @@
         });
     });
 </script>
-
-<script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
-<script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<!-- apps -->
-<script src="{{ asset('dist/js/app-style-switcher.js') }}"></script>
-<script src="{{ asset('dist/js/feather.min.js') }}"></script>
-<script src="{{ asset('assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}"></script>
-<script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
-<!-- Custom JavaScript -->
-<script src="{{ asset('dist/js/custom.min.js') }}"></script>
-<!-- This page JavaScript -->
-<script src="{{ asset('assets/extra-libs/c3/d3.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/c3/c3.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist/dist/chartist.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js') }}"></script>
-<script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
-
-</body>
-</html>
+@include('layout.Footer')

@@ -33,6 +33,17 @@
                             </div>
 
                             <div class="form-group mt-3">
+                                <label for="department_id">Department:</label>
+                                <select name="department_id" id="department_id" class="form-control" required>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}" {{ $team->department_id == $department->id ? 'selected' : '' }}>
+                                            {{ $department->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group mt-3">
                                 <label for="description">Description:</label>
                                 <textarea name="description" id="description" class="form-control">{{ $team->description }}</textarea>
                             </div>
@@ -45,25 +56,4 @@
         </div>
     </div>
 </div>
-
-<script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
-<script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<!-- apps -->
-<script src="{{ asset('dist/js/app-style-switcher.js') }}"></script>
-<script src="{{ asset('dist/js/feather.min.js') }}"></script>
-<script src="{{ asset('assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}"></script>
-<script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
-<!-- Custom JavaScript -->
-<script src="{{ asset('dist/js/custom.min.js') }}"></script>
-<!-- This page JavaScript -->
-<script src="{{ asset('assets/extra-libs/c3/d3.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/c3/c3.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist/dist/chartist.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js') }}"></script>
-<script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
-
-</body>
-</html>
+@include('layout.Footer')

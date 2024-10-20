@@ -14,6 +14,15 @@ class Department extends Model
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class);
+
+    }
+    public function location()
+    {
+        return $this->hasMany(Location::class);
+    }
+    public function teams() // Add teams relationship
+    {
+        return $this->hasMany(Team::class);
     }
 
 }

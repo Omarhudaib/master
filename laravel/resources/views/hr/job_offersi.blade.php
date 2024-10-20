@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-12">
 
-    <h2>Job Offers</h2>
+    <h2 class="text-center mb-4">Job Offers</h2>
     <a href="{{ route('job_offers.create') }}" class="btn btn-primary mb-3">Create Job Offer</a>
 
     @if(session('success'))
@@ -30,19 +30,41 @@
                 <tr>
                     <td>{{ $jobOffer->id }}</td>
                     <td>{{ $jobOffer->title }}</td>
-                    <td>{{ $jobOffer->description }}</td>
+                    <td>
+                        <div style="max-height: 150px; overflow-y: auto; width:100px;">
+                            <p style="white-space: nowrap;">{{ $jobOffer->description }}</p>
+                        </div>
+                    </td>
+
                     <td>{{ $jobOffer->company }}</td>
                     <td>{{ $jobOffer->location }}</td>
                     <td>{{ $jobOffer->type }}</td>
                     <td>${{ number_format($jobOffer->salary, 2) }}</td>
+
                     <td>
-                        <a href="{{ route('job_offers.edit', $jobOffer->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('job_offers.destroy', $jobOffer->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                        </form>
-                    </td>
+                        <div class="dropdown sub-dropdown show">
+                            <button class="btn btn-link text-muted dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="12" cy="5" r="1"></circle>
+                                    <circle cx="12" cy="19" r="1"></circle>
+                                </svg>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd1">
+
+                                <a class="dropdown-item" href="{{ route('job_offers.edit', $jobOffer->id) }}">Update</a>
+
+                                <form action="{{ route('job_offers.destroy', $jobOffer->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+
+
+
+                </td>
                 </tr>
             @endforeach
         </tbody>
@@ -52,26 +74,4 @@
 </div>
 </div>
 </div>
-</div>
-<script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
-<script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<!-- apps -->
-<script src="{{ asset('dist/js/app-style-switcher.js') }}"></script>
-<script src="{{ asset('dist/js/feather.min.js') }}"></script>
-<script src="{{ asset('assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}"></script>
-<script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
-<!-- Custom JavaScript -->
-<script src="{{ asset('dist/js/custom.min.js') }}"></script>
-<!-- This page JavaScript -->
-<script src="{{ asset('assets/extra-libs/c3/d3.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/c3/c3.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist/dist/chartist.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js') }}"></script>
-<script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
-
-</body>
-</html>
-
+@include('layout.Footer')

@@ -20,7 +20,8 @@ use Illuminate\Support\Facades\Auth;
 
 
 class EmployeeController extends Controller
-{public function indexEmployee()
+{
+    public function indexEmployee()
     {
         // Get the authenticated user's employee record
         $employee = Auth::user()->employee;
@@ -220,7 +221,7 @@ public function handleDayAction(Request $request)
 }
 public function ticketEmployee()
 {
-    $employeeId = Auth::id(); // Get the authenticated user's ID
+    $employeeId = auth()->user()->employee->id; // Get the authenticated user's ID
 
     // Get tasks related to the authenticated user
     $tasks = Task::whereHas('employee', function ($query) use ($employeeId) {
@@ -249,7 +250,7 @@ public function ticketEmployee()
 
 public function taskEmployee()
 {
-    $employeeId = Auth::id(); // Get the authenticated user's ID
+    $employeeId = auth()->user()->employee->id; // Get the authenticated user's ID
 
     // Get tasks related to the authenticated user
     $tasks = Task::whereHas('employee', function ($query) use ($employeeId) {
@@ -334,7 +335,9 @@ public function updateStatusti(Request $request, $id)
  public function indexre()
  {
      // Get the authenticated employee's ID
-     $employeeId = auth()->user()->employee->id;
+
+     $employeeId = auth()->user()->employee->id ?? null;
+     // Check if employee ID is available
 
      // Retrieve all leave requests for the authenticated employee
      $leaveRequests = LeaveRequest::where('employee_id', $employeeId)->get();
@@ -419,17 +422,29 @@ public function sende(Request $request)
 
 
 
-
-
-
-
-
 public function listTasks()
 {
+    $user = auth()->user();
 
-    $tasks = Task::with('project', 'employee', 'team')->get();
+    // Get the logged-in user's employee instance
+    $employee = $user->employee;
+
+    // Get tasks where the employee's team matches the logged-in employee's team
+    $tasks = Task::with('project', 'employee', 'team')
+                ->whereHas('employee.teams', function ($query) use ($employee) {
+                    $query->where('teams.id', function ($subQuery) use ($employee) {
+                        $subQuery->select('team_id')
+                                 ->from('employee_team')
+                                 ->where('employee_id', $employee->id);
+                    });
+                })
+                ->get();
+
     return view('employee.task.task', compact('tasks'));
 }
+
+
+
 
     public function fetchEmployees($projectId)
         {

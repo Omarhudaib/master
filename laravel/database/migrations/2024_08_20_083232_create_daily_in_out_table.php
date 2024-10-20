@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->timestamp('check_in');
+            $table->string('location_in')->nullable(); // Adding location_in column
+            $table->string('location_out')->nullable(); // Adding location_out column
             $table->timestamp('check_out')->nullable();
             $table->timestamps();
         });

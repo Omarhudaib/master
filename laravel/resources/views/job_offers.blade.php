@@ -39,42 +39,53 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('career') }}">Career</a>
                 </li>
-                <!-- Add other navigation items as needed -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
             </ul>
         </div>
     </nav>
 
     <div class="container mt-5">
         <h1 class="text-center">Job Offers</h1>
-        <div class="row">
+        <div class="row" >
             @forelse($jobOffers as $offer)
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ $offer->title }}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">{{ $offer->department }}</h6>
-                            <p class="card-text">{{ $offer->description }}</p>
                             <p><strong>Salary:</strong> {{ $offer->salary }}</p>
                             <p><strong>Location:</strong> {{ $offer->location }}</p>
                             <p><strong>Posted On:</strong> {{ \Carbon\Carbon::parse($offer->created_at)->format('M d, Y') }}</p>
-                            <!-- Apply Button -->
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#applyModal{{ $offer->id }}">Apply</button>
+
+                            <!-- Show Details Button to Trigger Modal -->
+                            <button class="btn btn-info mt-auto" data-toggle="modal" data-target="#detailsModal{{ $offer->id }}">Show Details</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Modal for Application Form -->
-                <div class="modal fade" id="applyModal{{ $offer->id }}" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel{{ $offer->id }}" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
+                <!-- Modal for Job Details and Application Form -->
+                <div class="modal fade " id="detailsModal{{ $offer->id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel{{ $offer->id }}" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="applyModalLabel{{ $offer->id }}">Apply for {{ $offer->title }}</h5>
+                                <h5 class="modal-title" id="detailsModalLabel{{ $offer->id }}">Job Details: {{ $offer->title }}</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ route('job.apply', $offer->id) }}" method="POST" enctype="multipart/form-data">
+                                <p><strong>Department:</strong> {{ $offer->department }}</p>
+                                <p><strong>Salary:</strong> {{ $offer->salary }}</p>
+                                <p><strong>Location:</strong> {{ $offer->location }}</p>
+                                <p><strong>Description:</strong> {{ $offer->description }}</p>
+                                <p><strong>Requirements:</strong> {{ $offer->requirements }}</p>
+
+                                <!-- Apply Button within the Modal -->
+                                <hr>
+                                <h5>Apply for this Job</h5>
+                                <form id="job-application-form" action="{{ route('job.apply', $offer->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div class="form-group">
                                         <label for="name">Full Name</label>
@@ -94,6 +105,16 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit Application</button>
                                 </form>
+
+                                <script>
+                                    document.getElementById('job-application-form').addEventListener('submit', function(event) {
+                                        @if(!Auth::check())
+                                            event.preventDefault(); // Stop form submission
+                                            window.location.href = "{{ url('/') }}"; // Redirect to home page
+                                        @endif
+                                    });
+                                </script>
+
                             </div>
                         </div>
                     </div>

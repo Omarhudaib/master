@@ -32,15 +32,32 @@
                                                 <td>{{ $task->project->name ?? 'N/A' }}</td>
                                                 <td>{{ $task->employee->first_name ?? 'N/A' }} {{ $task->employee->last_name ?? 'N/A' }}</td>
                                                 <td>{{ $task->status }}</td>
+                      
                                                 <td>
-                                                    <a href="{{ route('taskse.show', $task->id) }}" class="btn btn-info btn-sm">View</a>
-                                                    <a href="{{ route('taskse.edit', $task->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                                    <form action="{{ route('taskse.delete', $task->id) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                                    </form>
-                                                </td>
+                                                    <div class="dropdown sub-dropdown show">
+                                                        <button class="btn btn-link text-muted dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
+                                                                <circle cx="12" cy="12" r="1"></circle>
+                                                                <circle cx="12" cy="5" r="1"></circle>
+                                                                <circle cx="12" cy="19" r="1"></circle>
+                                                            </svg>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd1">
+                                                            <a class="dropdown-item" href="{{ route('taskse.show', $task->id) }}">Show</a>
+                                                            <a class="dropdown-item" href="{{ route('taskse.edit', $task->id) }}">Update</a>
+
+                                                            <form action="{{ route('taskse.delete', $task->id) }}" method="POST" style="display:inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+
+
+
+                                            </td>
+
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -85,23 +102,4 @@
         </div>
     </div>
 </div>
-
-
-<script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
-<script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('dist/js/app-style-switcher.js') }}"></script>
-<script src="{{ asset('dist/js/feather.min.js') }}"></script>
-<script src="{{ asset('assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}"></script>
-<script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
-<script src="{{ asset('dist/js/custom.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/c3/d3.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/c3/c3.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist/dist/chartist.min.js') }}"></script>
-<script src="{{ asset('assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js') }}"></script>
-<script src="{{ asset('assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js') }}"></script>
-<script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
-
-</body>
-</html>
+@include('layout.Footer')

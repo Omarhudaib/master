@@ -9,9 +9,11 @@ class DailyInOut extends Model
     protected $table = 'daily_in_out';
 
     protected $fillable = [
-        'employee_id', // Changed from 'user_id' to 'employee_id'
-        'check_in',    // Changed from 'in_time' to 'check_in'
-        'check_out',   // Changed from 'out_time' to 'check_out'
+        'employee_id',
+        'check_in',
+        'check_out',
+        'location_in',  // Added location_in
+        'location_out', // Added location_out
     ];
 
     public function employee() // Adjusted the relationship
@@ -44,4 +46,14 @@ class DailyInOut extends Model
 
       return $totalHours;
   }
+  public function locationIn()
+{
+    return $this->belongsTo(Location::class, 'location_in_id'); // Adjust 'location_in_id' to your actual foreign key
+}
+
+public function locationOut()
+{
+    return $this->belongsTo(Location::class, 'location_out_id'); // Adjust 'location_out_id' to your actual foreign key
+}
+
 }

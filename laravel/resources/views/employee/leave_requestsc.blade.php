@@ -17,6 +17,7 @@
                     </thead>
                     <tbody>
                         @foreach($leaveRequests as $request)
+                        @csrf
                         <tr>
                             <td>{{ $request->leave_type }}</td>
                             <td>{{ $request->start_date }}</td>
@@ -43,7 +44,7 @@
                         <div class="form-group">
                             <label for="employee_id">Employee</label>
                             <input type="hidden" name="employee_id" id="employee_id" value="{{ auth()->user()->employee->id }}">
-                            <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
+                            <input type="text" class="form-control" value="{{ auth()->user()->employee->first_name }}" readonly>
                         </div>
                         <div class="form-group">
                             <label for="leave_type">Leave Type</label>
@@ -70,13 +71,4 @@
         </div>
     </div>
 </div>
-
-<!-- Include your JavaScript files as needed -->
-<script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/libs/popper.js/dist/umd/popper.min.js') }}"></script>
-<script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('dist/js/app-style-switcher.js') }}"></script>
-<script src="{{ asset('dist/js/feather.min.js') }}"></script>
-<script src="{{ asset('assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}"></script>
-<script src="{{ asset('dist/js/sidebarmenu.js') }}"></script>
-<script src="{{ asset('dist/js/custom.min.js') }}"></script>
+@include('layout.Footer')

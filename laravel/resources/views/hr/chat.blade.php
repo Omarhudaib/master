@@ -81,3 +81,4 @@
 <script src="{{ asset('dist/js/pages/dashboards/dashboard1.min.js') }}"></script>
 </body>
 </html>
+@include('layout.Footer')

@@ -143,6 +143,14 @@ public function showall()
     $checkedInEmployees = DailyInOut::whereDate('check_in', $today)
                                     ->with('employee.user')
                                     ->get();
+                                    $employee = auth()->user()->employee;
+
+                                    $pos = Position::find($employee->position_id);  // Get the position name  // Get the position name
+                                    $deb = Department::find($employee->department_id);  // Get the department name
+
+                                    // Get the first team associated with the employee
+                                    $team = $employee->teams()->first();
+                                    $team_leader = $team ? $team->teamLeader : null;
 
     $employees = Employee::with(['department', 'position', 'user', 'user.role', 'teams'])->paginate(20);
     $roles = Role::all();
@@ -171,7 +179,7 @@ public function showall()
     // Fetch data with pagination
     $employees = Employee::paginate(20);
     $tasks = Task::paginate(20);
-    $departments = Department::paginate(20);
+    $departments = Department::withCount('employees')->get();
     $positions = Position::paginate(20);
     $leaveRequests = LeaveRequest::paginate(20);
     $dailyInOuts = DailyInOut::paginate(20);
@@ -209,39 +217,60 @@ public function showall()
         'activeProjects',
         'pendingTasks',
         'posts',
-        'meetings'
+        'meetings', 'pos' ,'team_leader','deb'
          // Add posts to the data being passed to the view
     ));
 }
 
-
 public function showallem()
 {
     // Check if the authenticated user has an associated employee
-    if (auth()->user() && auth()->user()->employee) {
-        $employeeId = auth()->user()->employee->id;
+    $employeeId = auth()->user()->employee->id ?? null;
 
-        // Get today's date
-        $today = now()->format('Y-m-d');
+    // Get today's date
+    $today = now()->format('Y-m-d');
 
-        // Get the latest check-in record for today
-        $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
-                                   ->whereDate('check_in', $today) // Check if there is a record for today
-                                   ->orderBy('check_in', 'desc')
-                                   ->first();
+    // Get the latest check-in record for today (if employee exists)
+    $latestCheckIn = $employeeId
+                     ? DailyInOut::where('employee_id', $employeeId)
+                                 ->whereDate('check_in', $today)
+                                 ->orderBy('check_in', 'desc')
+                                 ->first()
+                     : null;
 
-        // Determine if the user can check in or check out
-        $canCheckIn = is_null($latestCheckIn) || !is_null($latestCheckIn->check_out); // Allow check-in if no check-in today or already checked out
-        $canCheckOut = !is_null($latestCheckIn) && is_null($latestCheckIn->check_out); // Allow check-out if check-in exists and not checked out yet
-    } else {
-        // Handle the case where the user doesn't have an employee record
-        $employeeId = null;
-        $latestCheckIn = null;
-        $canCheckIn = false;
-        $canCheckOut = false;
+    // Determine if the user can check in or check out
+    $canCheckIn = is_null($latestCheckIn) || !is_null($latestCheckIn->check_out); // Allow check-in if no check-in today or already checked out
+    $canCheckOut = !is_null($latestCheckIn) && is_null($latestCheckIn->check_out); // Allow check-out if check-in exists and not checked out yet
+
+    // Get search filters from the request (if any)
+    $search = request()->input('search');
+    $departmentFilter = request()->input('department');
+    $positionFilter = request()->input('position');
+
+    // Build the query for employees
+    $employeesQuery = Employee::with(['department', 'position', 'user', 'user.role', 'teams']);
+
+    if ($search) {
+        // Search by employee name or email
+        $employeesQuery->whereHas('user', function($query) use ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+        });
     }
 
-    $employees = Employee::with(['department', 'position', 'user', 'user.role', 'teams'])->paginate(20);
+    if ($departmentFilter) {
+        // Filter by department
+        $employeesQuery->where('department_id', $departmentFilter);
+    }
+
+    if ($positionFilter) {
+        // Filter by position
+        $employeesQuery->where('position_id', $positionFilter);
+    }
+
+    $employees = $employeesQuery->paginate(20);
+
+    // Fetch data for dropdowns and filters
     $roles = Role::all();
     $departments = Department::all();
     $positions = Position::all();
@@ -249,6 +278,7 @@ public function showallem()
 
     return view('hr.home_hr', compact('latestCheckIn', 'canCheckIn', 'canCheckOut', 'employees', 'roles', 'departments', 'positions', 'teams'));
 }
+
 public function showemployee()
 {
 
@@ -325,66 +355,65 @@ public function show($id)
 public function update(Request $request, $id)
 {
     // Retrieve the employee and associated user
-    $employee = Employee::findOrFail($id);
-    $user = $employee->user;
+$employee = Employee::findOrFail($id);  // Find the employee by the given ID
+$user = $employee->user;  // Get the associated user from the employee
 
-    // Validate the request data
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id . '|max:255',
-        'password' => 'nullable|string|min:8',
-        'role_id' => 'required|exists:roles,id',
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'department_id' => 'nullable|exists:departments,id',
-        'position_id' => 'nullable|exists:positions,id',
-        'team_id' => 'nullable|exists:teams,id',
-        'salary' => 'nullable|numeric',
-        'date_of_birth' => 'nullable|date',
-        'hire_date' => 'nullable|date',
-        'national_id' => 'nullable|string|max:255',
-        'marital_status' => 'nullable|in:single,married',
-        'phone_number' => 'nullable|string|max:20',
-        'employee_identifier' => 'nullable|string|max:255',
-        'sick_leaves' => 'nullable|integer',
-        'annual_vacation_days' => 'nullable|integer',
-    ]);
+// Validate the request data
+$validated = $request->validate([
+    'name' => 'required|string|max:255',
+    'email' => 'required|email',
+    'password' => 'nullable|string|min:8',
+    'role_id' => 'required|exists:roles,id',
+    'first_name' => 'required|string|max:255',
+    'last_name' => 'required|string|max:255',
+    'department_id' => 'nullable|exists:departments,id',
+    'position_id' => 'nullable|exists:positions,id',
+    'team_id' => 'nullable|exists:teams,id',
+    'salary' => 'nullable|numeric',
+    'date_of_birth' => 'nullable|date',
+    'hire_date' => 'nullable|date',
+    'national_id' => 'nullable|string|max:255',
+    'marital_status' => 'nullable|in:single,married',
+    'phone_number' => 'nullable|string|max:20',
+    'employee_identifier' => 'nullable|string|max:255',
+    'sick_leaves' => 'nullable|integer',
+    'annual_vacation_days' => 'nullable|integer',
+]);
 
-    // Update user information
+// Update user information
+$user->update([
+    'name' => $validated['name'],
+    'email' => $validated['email'],
+    'role_id' => $validated['role_id'],
+    'username' => strtolower(str_replace(' ', '_', $validated['name'])),
+]);
+
+// Update password if provided
+if (!empty($validated['password'])) {
     $user->update([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'role_id' => $validated['role_id'],
-        'username' => strtolower(str_replace(' ', '_', $validated['name'])),
+        'password' => bcrypt($validated['password']),
     ]);
-
-    // Update password if provided
-    if (!empty($validated['password'])) {
-        $user->update([
-            'password' => bcrypt($validated['password']),
-        ]);
-    }
-
-    // Update employee information
-    $employee->update([
-        'first_name' => $validated['first_name'],
-        'last_name' => $validated['last_name'],
-        'department_id' => $validated['department_id'],
-        'position_id' => $validated['position_id'],
-        'team_id' => $validated['team_id'],
-        'salary' => $validated['salary'],
-        'date_of_birth' => $validated['date_of_birth'],
-        'hire_date' => $validated['hire_date'],
-        'national_id' => $validated['national_id'],
-        'marital_status' => $validated['marital_status'],
-        'phone_number' => $validated['phone_number'],
-        'employee_identifier' => $validated['employee_identifier'],
-        'sick_leaves' => $validated['sick_leaves'],
-        'annual_vacation_days' => $validated['annual_vacation_days'],
-    ]);
-
-    return redirect()->route('employeesh')->with('success', 'Employee updated successfully.');
 }
+
+// Update employee information
+$employee->update([
+    'first_name' => $validated['first_name'],
+    'last_name' => $validated['last_name'],
+    'department_id' => $validated['department_id'],
+    'position_id' => $validated['position_id'],
+    'team_id' => $validated['team_id'],
+    'salary' => $validated['salary'],
+    'date_of_birth' => $validated['date_of_birth'],
+    'hire_date' => $validated['hire_date'],
+    'national_id' => $validated['national_id'],
+    'marital_status' => $validated['marital_status'],
+    'phone_number' => $validated['phone_number'],
+    'employee_identifier' => $validated['employee_identifier'],
+    'sick_leaves' => $validated['sick_leaves'],
+    'annual_vacation_days' => $validated['annual_vacation_days'],
+]);
+
+return redirect()->route('employeesh')->with('success', 'Employee updated successfully.');}
 
 public function destroy($id)
 {
@@ -980,7 +1009,6 @@ public function indexr()
      return redirect()->route('hr.leave_requestsi')->with('success', 'Leave request deleted successfully.');
  }
 
-
  public function updateStatusr(Request $request, $id)
  {
      $request->validate([
@@ -1020,6 +1048,7 @@ public function indexr()
 
      return redirect()->back()->with('success', 'Leave request status updated successfully!');
  }
+
 
  public function JobRequest()
  {

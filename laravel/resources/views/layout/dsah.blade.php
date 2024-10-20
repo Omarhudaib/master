@@ -2,6 +2,7 @@
 <html dir="ltr" lang="en">
 
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Tell the browser to be responsive to screen width -->
@@ -95,49 +96,80 @@
                     <!-- toggle and nav items -->
                     <!-- ============================================================== -->
                     <ul class="navbar-nav float-left mr-auto ml-3 pl-1">
+                        @php
+                        // Fetch the authenticated user's employee ID
+                        $employeeId = auth()->user()->employee->id;
 
+                        // Fetch all pending tasks for the authenticated user's employee ID
+                        $pendingTasks = \App\Models\Task::where('employee_id', $employeeId)
+                            ->where('status', 'Pending')
+                            ->get()->map(function ($task) {
+                                return (object)[
+                                    'type' => 'task',
+                                    'description' => $task->description,
+                                    'created_at' => $task->created_at,
+                                    'title' => $task->title // You can also include the title if needed
+                                ];
+                            });
 
+                        // Fetch all open tickets for the authenticated user's employee ID
+                        $pendingTickets = \App\Models\Ticket::where('employee_id', $employeeId)
+                            ->where('status', 'Open')
+                            ->get()->map(function ($ticket) {
+                                return (object)[
+                                    'type' => 'ticket',
+                                    'description' => $ticket->description,
+                                    'created_at' => $ticket->created_at,
+                                    'title' => $ticket->subject // Assuming 'subject' is what you want for tickets
+                                ];
+                            });
 
-            @php
-            // Fetch all pending tasks for the authenticated user
-            $pendingTasks = \App\Models\Task::where('employee_id', auth()->id())
-                ->where('status', 'Pending')
-                ->get();
+                        // Fetch approved leave requests for the authenticated user's employee ID
+                        $pendingRequests = \App\Models\LeaveRequest::where('employee_id', $employeeId)
+                            ->where('status', 'Approved')
+                            ->get()->map(function ($request) {
+                                return (object)[
+                                    'type' => 'leave_request',
+                                    'description' => "Leave from {$request->start_date} to {$request->end_date}", // Example description
+                                    'created_at' => $request->created_at,
+                                    'title' => 'Leave Request' // You can set a static title or customize
+                                ];
+                            });
 
-            // Fetch all pending tickets for the authenticated user
-            $pendingTickets = \App\Models\Ticket::where('employee_id', auth()->id())
-                ->where('status', 'Open')
-                ->get();
+                        // Merge all notifications into one collection
+                        $pendingNotifications = $pendingTasks->merge($pendingTickets)->merge($pendingRequests);
+                        @endphp
 
-                $pendingRequests = $pendingTasks->merge($pendingTickets);
-            @endphp
-
-
-                        <!-- ============================================================== -->
-                        <!-- create new -->
-                        <!-- ============================================================== -->
                         <!-- Notification -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle pl-md-3 position-relative" href="javascript:void(0)"
                                id="bell" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span><i data-feather="bell" class="svg-icon"></i></span>
-                                <span class="badge badge-primary notify-no rounded-circle">{{ $pendingRequests->count() }}</span>
+                                <span class="badge badge-pill badge-primary notify-no position-absolute"
+                                      style="top: 8px; right: 8px; font-size: 0.8rem;">
+                                    {{ $pendingNotifications->count() }}
+                                </span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-left mailbox animated bounceInDown">
-                                <ul class="list-style-none">
+                            <div class="dropdown-menu dropdown-menu-left mailbox animated bounceInDown p-0"
+                                 style="min-width: 300px; border-radius: 8px;">
+                                <ul class="list-style-none mb-0">
                                     <li>
-                                        <div class="message-center notifications position-relative">
-                                            @forelse ($pendingRequests as $request)
-                                                <p class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                                                    <div class="btn btn-danger">
-                                                        <i data-feather="airplay" class="text-white"></i>
+                                        <div class="message-center notifications position-relative py-2">
+                                            @forelse ($pendingNotifications as $notification)
+                                                <a href="javascript:void(0)" class="message-item d-flex align-items-center border-bottom px-3 py-2"
+                                                   style="text-decoration: none;">
+                                                    <div class="btn btn-warning btn-circle mr-2">
+                                                        <i data-feather="alert-circle" class="text-white"></i>
                                                     </div>
                                                     <div class="w-75 d-inline-block v-middle pl-2">
-                                                        <h6 class="message-title mb-0 mt-1">{{ $request->description }}</h6>
+                                                        <h6 class="message-title mb-0 mt-1 text-dark">
+                                                            {{ $notification->description }}
+                                                        </h6>
+                                                        <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                                                     </div>
-                                                </p>
+                                                </a>
                                             @empty
-                                                <div class="text-center py-2">No pending requests</div>
+                                                <div class="text-center py-3 text-muted">No pending notifications</div>
                                             @endforelse
                                         </div>
                                     </li>
@@ -146,24 +178,25 @@
                         </li>
 
 
+
+
                     </ul>
                     <!-- ============================================================== -->
                     <!-- Right side toggle and nav items -->
                     <!-- ============================================================== -->
                     <ul class="navbar-nav float-right">
                         <!-- ============================================================== -->
-
-                        <!-- ============================================================== -->
                         <!-- User profile and search -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
-                                <img src="{{ asset('assets/images/users/user.jpg') }}" alt="user" class="rounded-circle"
-                                    width="40">
+                                <a href="{{ route('employee_p.edit', ['id' => auth()->id()]) }}">
+                                    <img src="{{ asset('assets/images/users/user.jpg') }}" alt="user" class="rounded-circle" width="40">
+                                </a>
                                 <span class="ml-2 d-none d-lg-inline-block">
                                     <span>Hello,</span>
                                     <span class="text-dark">{{ auth()->user()->name }}</span>
-                                    <i data-feather="chevron-down" class="svg-icon"></i>
+                            
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
@@ -175,18 +208,17 @@
 
                                     @if($employeeId)
                                         <a href="{{ route('employee_p.edit', ['id' => auth()->id()]) }}" class="btn btn-warning btn-sm">Edit Employee</a>
-
                                     @else
                                         <span class="text-danger">No employee record found.</span>
                                     @endif
                                 </div>
                             </div>
                         </li>
-
                         <!-- ============================================================== -->
                         <!-- User profile and search -->
                         <!-- ============================================================== -->
                     </ul>
+
                 </div>
             </nav>
         </header>
@@ -220,12 +252,20 @@
                                 <span class="hide-menu">Ticket List</span>
                             </a>
                         </li>
+                        @php
+                        $employee = auth()->user()->employee;
+                    @endphp
+
+                    @if($employee->teams_leader()->where('team_leader_id', $employee->id)->exists())
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('taskse.index') }}" aria-expanded="false">
-                                <i data-feather="check-square" class="feather-icon"></i> <!-- Updated icon -->
-                                <span class="hide-menu">Task List</span>
+                                <i data-feather="check-square" class="feather-icon"></i>
+                                <span class="hide-menu">Create Task</span>
                             </a>
                         </li>
+                    @endif
+
+
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('task_list') }}" aria-expanded="false">
                                 <i data-feather="list" class="feather-icon"></i> <!-- Updated icon -->
@@ -245,7 +285,7 @@
                                 <span class="hide-menu">Leave Requests</span>
                             </a>
                         </li>
-
+                        <li class="list-divider"></li>
                         <li class="list-divider"></li>
 
                         <form method="POST" action="{{ route('logout') }}">

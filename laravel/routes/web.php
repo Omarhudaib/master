@@ -158,6 +158,11 @@ Route::get('teamsd/{team}/employees', [AdminController::class, 'getEmployeesByTe
 Route::delete('teamsd/{team}/employees/{employee}', [AdminController::class, 'removeEmployee'])->name('teams.removeEmployee');
 
 
+// Route for showing the edit form for a specific department
+Route::get('/departmentsa/{id}/edit', [AdminController::class, 'editdep'])->name('departmentsa.edit');
+
+// Route for updating a specific department
+Route::put('/departmentsa/{id}', [AdminController::class, 'updatedepartments'])->name('departmentsa.update');
 
 
 Route::get('projectsd', [AdminController::class, 'indexproject'])->name('projects.index');

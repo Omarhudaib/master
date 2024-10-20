@@ -14,14 +14,16 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
-
+use App\Models\Location;
 use App\Models\Team;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+
 
 
 class AdminController extends Controller
@@ -45,18 +47,27 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'location_name' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         // Create the department
-        Department::create([
+        $department = Department::create([
             'name' => $request->name,
             'description' => $request->description,
         ]);
 
-        // Redirect back to the index method with success message
-        return redirect()->route('departments.index')->with('success', 'Department created successfully.');
-    }
+        // Create the department location
+        $department->location()->create([
+            'name' => $request->location_name,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ]);
 
+        // Redirect back with success message
+        return redirect()->route('departments.index')->with('success', 'Department and location created successfully.');
+    }
 
 
 
@@ -103,12 +114,17 @@ public function updateStatusreq(Request $request, $id)
             $pendingTicket = Ticket::where('status', 'Pending')->count();
             // Fetch the authenticated employee ID
             $employeeId = auth()->user()->employee->id;
-
+            $employee = auth()->user()->employee;
             // Get the latest check-in record
             $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
                                         ->orderBy('check_in', 'desc')
                                         ->first();
+                                        $pos = Position::find($employee->position_id);  // Get the position name  // Get the position name
+                                        $deb = Department::find($employee->department_id);  // Get the department name
 
+                                        // Get the first team associated with the employee
+                                        $team = $employee->teams()->first();
+                                        $team_leader = $team ? $team->teamLeader : null;
             // Determine if the user can check in or check out
             $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
             $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
@@ -153,7 +169,7 @@ public function updateStatusreq(Request $request, $id)
                 'activeProjects',
                 'pendingTasks',
                 'posts',
-                'meetings'
+                'meetings', 'pos' ,'team_leader','deb'
                  // Add posts to the data being passed to the view
             ));
         }
@@ -438,25 +454,15 @@ public function indexteams()
 }
 
 
-
-
 public function createteams()
 {
+    $departments = Department::all();
     $employees = Employee::all();
-    return view('admin.teams_create', compact('employees'));
+    return view('admin.teams_create', compact('employees', 'departments'));
 }
 
-public function storeteams(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'team_leader_id' => 'required|exists:employees,id',
-        'description' => 'nullable|string',
-    ]);
 
-    Team::create($validated);
-    return redirect()->route('teams.index')->with('success', 'Team created successfully.');
-}
+
 
 public function showteams(Team $team)
 {
@@ -465,23 +471,37 @@ public function showteams(Team $team)
 }
 
 public function editteams(Team $team)
-{
+{   $departments=Department::all();
     $employees = Employee::all();
-    return view('admin.teams_edit', compact('team', 'employees'));
+    return view('admin.teams_edit', compact('team', 'employees','departments'));
 }
 
+public function storeteams(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'team_leader_id' => 'required|exists:employees,id',
+        'department_id' => 'required|exists:departments,id', // Change 'department' to 'departments'
+        'description' => 'nullable|string',
+    ]);
+
+    Team::create($validated);
+    return redirect()->route('teams.index')->with('success', 'Team created successfully.');
+}
 
 public function updateteams(Request $request, Team $team)
 {
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'team_leader_id' => 'required|exists:employees,id',
+        'department_id' => 'required|exists:departments,id', // Change 'department' to 'departments'
         'description' => 'nullable|string',
     ]);
 
     $team->update($validated);
     return redirect()->route('teams.index')->with('success', 'Team updated successfully.');
 }
+
 
 public function destroyteams(Team $team)
 {
@@ -818,13 +838,50 @@ public function destroyPosition(Position $position)
 
 
 
+public function editdep($id)
+{
+    $department = Department::findOrFail($id);
+    return view('admin.department_edit', compact('department'));
+}
 
+public function updatedepartments(Request $request, $id)
+{
+    // Validate the incoming request data
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'location_name' => 'required|string|max:255',
+        'latitude' => 'required|numeric',
+        'longitude' => 'required|numeric',
+    ]);
 
+    $department = Department::find($id);
 
+    // Check if the department exists
+    if (!$department) {
+        return redirect()->route('departments.index')->with('error', 'Department not found.');
+    }
 
+    $department->name = $request->input('name');
+    $department->description = $request->input('description');
 
+    // Ensure that $department->location returns a single instance
+    $location = $department->location;
 
+    if ($location) { // Check if location exists
+        $location->name = $request->input('location_name');
+        $location->latitude = $request->input('latitude');
+        $location->longitude = $request->input('longitude');
 
+        $location->save(); // Save the location instance
+    } else {
+        // Handle the case when the location is not found (optional)
+    }
+
+    $department->save(); // Save the department instance
+
+    return redirect()->route('departments.index')->with('success', 'Department updated successfully');
+}
 
 
 
@@ -889,55 +946,158 @@ public function destroyTicket(Ticket $ticket)
     return redirect()->route('tickets.index')->with('success', 'Ticket deleted successfully.');
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-public function checkIn()
+public function checkIn(Request $request)
 {
-    $employeeId = auth()->user()->employee->id;
-    $today = now()->format('Y-m-d');
+    $employee = Auth::user()->employee;
 
-    // Check if the employee has already checked in today
-    $existingCheckIn = DailyInOut::where('employee_id', $employeeId)
-                                 ->whereDate('check_in', $today)
-                                 ->first();
+    // استرجاع المواقع المرتبطة بقسم الموظف
+    $locations = Location::where('department_id', $employee->department_id)->get();
 
-    if (!$existingCheckIn) {
-        // Allow check-in
-        DailyInOut::create([
-            'employee_id' => $employeeId,
-            'check_in' => now(),
+    // تحقق مما إذا كان هناك مواقع متاحة
+    if ($locations->isEmpty()) {
+        return redirect()->back()->withErrors('No locations found for your department.');
+    }
+
+    // استرجاع الموقع المتوقع
+    $expectedLocation = $locations->first();
+
+    // تقسيم الإحداثيات المدخلة
+    $submittedLocation = $request->input('location_in');
+
+    if (strpos($submittedLocation, ',') === false) {
+        return redirect()->back()->withErrors(['location_in' => 'Location format is invalid. Please provide latitude and longitude.']);
+    }
+
+    list($latitude, $longitude) = explode(',', $submittedLocation);
+
+    // حساب المسافة بين الموقع المدخل والموقع المتوقع
+    $distance = $this->haversineGreatCircleDistance(
+        (float) $expectedLocation->latitude,
+        (float) $expectedLocation->longitude,
+        (float) $latitude,
+        (float) $longitude
+    );
+
+    // تحديد مدى القرب (مثلاً 100 متر)
+    $acceptableDistance = 3; // 100 متر في كيلومترات (0.1 كيلومتر)
+
+    if ($distance > $acceptableDistance) {
+        return redirect()->back()->withErrors([
+            'location_in' => 'The selected location is too far from the expected location: ' . $expectedLocation->name .
+                             ' (Distance: ' . round($distance, 2) . ' km, Acceptable: ' . $acceptableDistance . ' km)'
         ]);
     }
 
-    return redirect()->back();
+    // تحقق مما إذا كان الموظف قد قام بالتسجيل في اليوم نفسه
+    $today = now()->format('Y-m-d'); // التاريخ الحالي
+    $existingCheckIn = DailyInOut::where('employee_id', $employee->id)
+                                   ->whereDate('check_in', $today)
+                                   ->first();
+
+    if ($existingCheckIn) {
+        return redirect()->back()->withErrors('You have already checked in today.');
+    }
+
+    // إنشاء سجل جديد في نموذج DailyInOut
+    DailyInOut::create([
+        'employee_id' => $employee->id,
+        'check_in' => now(),
+        'location_in' => $submittedLocation, // تخزين الموقع المدخل
+    ]);
+
+    return redirect()->back()->with('success', 'You have checked in.');
 }
 
 
-public function checkOut()
+// دالة لحساب المسافة بين نقطتين باستخدام معادلة هافرسين
+private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
 {
-    $employeeId = auth()->user()->employee->id;
+    // تحويل الدرجات إلى راديان
+    $latitudeFrom = deg2rad($latitudeFrom);
+    $longitudeFrom = deg2rad($longitudeFrom);
+    $latitudeTo = deg2rad($latitudeTo);
+    $longitudeTo = deg2rad($longitudeTo);
 
-    // Update the check-out time
-    $dailyInOut = DailyInOut::where('employee_id', $employeeId)
-                            ->whereNull('check_out')
-                            ->orderBy('check_in', 'desc')
-                            ->first();
+    // فرق الإحداثيات
+    $latDifference = $latitudeTo - $latitudeFrom;
+    $lonDifference = $longitudeTo - $longitudeFrom;
 
-    if ($dailyInOut) {
-        $dailyInOut->update(['check_out' => now()]);
+    // حساب المسافة باستخدام صيغة هافرسين
+    $a = sin($latDifference / 2) * sin($latDifference / 2) +
+         cos($latitudeFrom) * cos($latitudeTo) *
+         sin($lonDifference / 2) * sin($lonDifference / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+    return $earthRadius * $c; // المسافة بالكيلومترات
+}
+
+
+
+public function checkOut(Request $request)
+{
+    $employee = Auth::user()->employee;
+
+    // استرجاع المواقع المرتبطة بقسم الموظف
+    $locations = Location::where('department_id', $employee->department_id)->get();
+
+    // تحقق مما إذا كان هناك مواقع متاحة
+    if ($locations->isEmpty()) {
+        return redirect()->back()->withErrors('No locations found for your department.');
     }
 
-    return redirect()->back()->with('success', 'Checked out successfully.');
+    // استرجاع الموقع المتوقع
+    $expectedLocation = $locations->first();
+
+    // تقسيم الإحداثيات المدخلة
+    $submittedLocation = $request->input('location_out');
+
+    if (strpos($submittedLocation, ',') === false) {
+        return redirect()->back()->withErrors(['location_out' => 'Location format is invalid. Please provide latitude and longitude.']);
+    }
+
+    list($latitude, $longitude) = explode(',', $submittedLocation);
+
+    // حساب المسافة بين الموقع المدخل والموقع المتوقع
+    $distance = $this->haversineGreatCircleDistance(
+        (float) $expectedLocation->latitude,
+        (float) $expectedLocation->longitude,
+        (float) $latitude,
+        (float) $longitude
+    );
+    $today = now()->format('Y-m-d'); // التاريخ الحالي
+    $existingCheckOut= DailyInOut::where('employee_id', $employee->id)
+                                   ->whereDate('check_out', $today)
+                                   ->first();
+
+    if ($existingCheckOut) {
+        return redirect()->back()->withErrors('You have already checked out in today.');
+    }
+
+    // تحديد مدى القرب (مثلاً 100 متر)
+    $acceptableDistance = 3; // 100 متر في كيلومترات (0.1 كيلومتر)
+
+    if ($distance > $acceptableDistance) {
+        return redirect()->back()->withErrors([
+            'location_out' => 'The selected location is too far from the expected location: ' . $expectedLocation->name .
+                              ' (Distance: ' . round($distance, 2) . ' km, Acceptable: ' . $acceptableDistance . ' km)'
+        ]);
+    }
+
+    // استرجاع أحدث تسجيل دخول للموظف
+    $latestCheckIn = DailyInOut::where('employee_id', $employee->id)
+                                ->whereNull('check_out')
+                                ->orderBy('check_in', 'desc')
+                                ->first();
+
+    if ($latestCheckIn) {
+        $latestCheckIn->update([
+            'check_out' => now(),
+            'location_out' => $submittedLocation, // حفظ الموقع عند تسجيل الخروج
+        ]);
+    }
+
+
+    return redirect()->back()->with('success', 'You have checked out.');
 }
 
 
