@@ -30,7 +30,8 @@
                                 <td>{{ $request->cover_letter }}</td>
                                 <td>
                                     @if($request->resume_path)
-                                        <a href="{{ Storage::url($request->resume_path) }}" download class="btn btn-success btn-sm">Download Resume</a>
+                                    <a href="{{ route('resumes.download', basename($request->resume_path)) }}" class="btn btn-success btn-sm">Download Resume</a>
+
                                     @else
                                         <span>No Resume Uploaded</span>
                                     @endif

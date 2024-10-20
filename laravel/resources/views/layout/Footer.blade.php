@@ -1,10 +1,8 @@
 
 
-<h>
+
 <!-- Footer -->
-<footer class="footer text-center text-muted">
-    All Rights Reserved by HT and ER System. Designed and Developed for Employee Management.
-</footer>
+
 
 </div>
 <!-- jQuery and Bootstrap -->

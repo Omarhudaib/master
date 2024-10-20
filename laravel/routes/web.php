@@ -8,6 +8,11 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Storage;
+
+Route::get('resumes/{filename}', function ($filename) {
+    return response()->download(storage_path('app/resumes/' . $filename));
+})->name('resumes.download');
 
 /*
 |--------------------------------------------------------------------------
