@@ -137,7 +137,7 @@
                             });
 
                         // Merge all notifications into one collection
-                        $pendingNotifications = $pendingTasks->merge($pendingTickets)->merge($pendingRequests);
+                        $pendingNotifications = collect([])->merge($pendingTasks)->merge($pendingTickets)->merge($pendingRequests);
                         @endphp
 
                         <!-- Notification -->
@@ -196,7 +196,7 @@
                                 <span class="ml-2 d-none d-lg-inline-block">
                                     <span>Hello,</span>
                                     <span class="text-dark">{{ auth()->user()->name }}</span>
-                            
+
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">

@@ -5,6 +5,18 @@
     <div class="page-breadcrumb">
         <div class="row">
             <div class="col-12">
+                @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
 
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
@@ -36,23 +48,23 @@
                                     @endforeach
                                 </select>
                             </div>
+<div class="form-group">
+    <label for="start_date">Start Date</label>
+    <input type="date" name="start_date" class="form-control" id="start_date"
+           value="{{ old('start_date', $project->start_date) }}" required>
+</div>
 
-                            <div class="form-group">
-                                <label for="start_date">Start Date</label>
-                                <input type="date" name="start_date" class="form-control" id="start_date"
-                                       value="{{ old('start_date', optional($project->start_date)->format('Y-m-d')) }}" required>
-                            </div>
+<div class="form-group">
+    <label for="end_date">End Date</label>
+    <input type="date" name="end_date" class="form-control" id="end_date"
+           value="{{ old('end_date', $project->end_date) }}" required>
+</div>
 
-                            <div class="form-group">
-                                <label for="end_date">End Date</label>
-                                <input type="date" name="end_date" class="form-control" id="end_date"
-                                       value="{{ old('end_date', optional($project->end_date)->format('Y-m-d')) }}" required>
-                            </div>
 
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select name="status" class="form-control" id="status" required>
-                                    <option value="Pending" {{ $project->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="Pending" {{ $project->status == 'Planned' ? 'selected' : '' }}>Planned</option>
                                     <option value="In Progress" {{ $project->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
                                     <option value="Completed" {{ $project->status == 'Completed' ? 'selected' : '' }}>Completed</option>
                                 </select>

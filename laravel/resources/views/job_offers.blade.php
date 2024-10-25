@@ -55,6 +55,7 @@
     <div class="container mt-5">
         <h1 class="text-center">Job Offers</h1>
         <div class="row" >
+
             @forelse($jobOffers as $offer)
                 <div class="col-md-4 mb-4">
                     <div class="card">
@@ -90,6 +91,7 @@
 
                                 <!-- Apply Button within the Modal -->
                                 <hr>
+
                                 <h5>Apply for this Job</h5>
                                 <form id="job-application-form" action="{{ route('job.apply', $offer->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
