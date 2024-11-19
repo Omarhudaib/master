@@ -42,9 +42,7 @@
                         <a class="nav-link" href="{{ route('login') }}">Login</a>
                     </li>
                 @endif
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('career') }}">Career</a>
-                </li>
+   
                 <li class="nav-item">
                     <a class="nav-link" href="/">Home</a>
                 </li>

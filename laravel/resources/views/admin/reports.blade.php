@@ -6,12 +6,27 @@
             <div class="col-md-12">
                 <h2 class="text-center mb-4">Employee Monthly Report</h2>
 
+                <form method="GET" action="{{ route('report') }}">
+                    <div class="row mb-3">
+                        <div class="col-md-4 offset-md-4">
+                            <select name="month" class="form-control" onchange="this.form.submit()">
+                                <option value="">Select Month</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <!-- Add other months here -->
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
                 <button class="btn btn-secondary mb-3" onclick="printDiv('printable-area')">Print Report</button>
 
                 <div class="card shadow-sm">
                     <div id="printable-area">
                         <div class="card-header bg-primary text-white">
-                            <h4 class="mb-0">Employee Report</h4>
+                            <h4 class="mb-0">Employee Report - {{ $selectedMonthName }}</h4>
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
@@ -30,7 +45,7 @@
                                 <tbody>
                                     @foreach ($monthlyData as $data)
                                         <tr>
-                                            <td>{{ $data['name'] }} {{ $data['namel'] }}</td>
+                                            <td>{{ $data['name'] }}</td>
                                             <td>{{ $data['department'] }}</td>
                                             <td>{{ $data['total_hours'] }}</td>
                                             <td>{{ number_format($data['salary_per_hour'], 2) }}</td>
@@ -44,11 +59,13 @@
                             </table>
                         </div>
                     </div>
+                </div>
 
             </div>
         </div>
     </div>
 </div>
+
 <script>
     function printDiv(divId) {
         var printContents = document.getElementById(divId).innerHTML;
@@ -59,4 +76,5 @@
         document.body.innerHTML = originalContents;
     }
 </script>
+
 @include('layout.Footer')

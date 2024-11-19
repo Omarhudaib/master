@@ -24,7 +24,7 @@
                                 <label for="team_leader_id">Team Leader:</label>
                                 <select name="team_leader_id" id="team_leader_id" class="form-control" required>
                                     @foreach($employees as $employee)
-                                        <option value="{{ $employee->id }}">{{ $employee->first_name }} {{ $employee->last_name }}</option>
+                                        <option value="{{ $employee->id }}">{{ $employee->user->name }} {{ $employee->last_name }}</option>
                                     @endforeach
                                 </select>
                             </div>

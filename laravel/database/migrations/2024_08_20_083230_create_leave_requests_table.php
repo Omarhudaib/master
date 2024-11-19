@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('leave_type', ['Sick', 'Vacation', 'Maternity', 'Paternity', 'Unpaid']);
             $table->date('start_date');
             $table->date('end_date')->nullable();
+            $table->string('path')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->timestamps();
         });

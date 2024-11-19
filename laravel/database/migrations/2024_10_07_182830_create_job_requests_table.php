@@ -12,6 +12,7 @@ class CreateJobRequestsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Assuming you have a users table
             $table->foreignId('job_offer_id')->constrained('job_offers')->onDelete('cascade');
+            
             $table->text('cover_letter')->nullable();
             $table->timestamps();
         });

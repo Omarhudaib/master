@@ -38,7 +38,7 @@
                                     <tr>
                                         <td>{{ $team->name }}</td>
                                         <td>{{ $team->department ? $team->department->name : 'N/A' }}</td>
-                                        <td>{{ $team->teamLeader->first_name ?? 'N/A' }} {{ $team->teamLeader->last_name ?? 'N/A' }}</td>
+                                        <td>{{ $team->teamLeader->user->name?? 'N/A' }}</td>
                                         <td>{{ $team->description ?? 'No description available' }}</td>
                                         <td>
                                             @if($team->employees->isEmpty())
@@ -46,7 +46,7 @@
                                             @else
                                                 <ul class="list-unstyled mb-0">
                                                     @foreach($team->employees as $employee)
-                                                        <li>{{ $employee->first_name }} {{ $employee->last_name }}</li>
+                                                        <li> {{ $employee->user->name }}</li>
                                                     @endforeach
                                                 </ul>
                                             @endif
@@ -59,7 +59,7 @@
                                                 <div class="form-group">
                                                     <select name="employee_ids[]" class="form-control"  required>
                                                         @foreach($availableEmployees as $employee)
-                                                            <option value="{{ $employee->id }}">{{ $employee->first_name }} {{ $employee->last_name }}</option>
+                                                            <option value="{{ $employee->id }}">{{ $employee->user->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -75,7 +75,7 @@
                                                 <div class="form-group">
                                                     <select name="employee_id" class="form-control" required>
                                                         @foreach($team->employees as $employee)
-                                                            <option value="{{ $employee->id }}">{{ $employee->first_name }} {{ $employee->last_name }}</option>
+                                                            <option value="{{ $employee->id }}">{{ $employee->user->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>

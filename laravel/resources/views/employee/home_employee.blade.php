@@ -96,7 +96,7 @@
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-6">
                 <div class="card card-hover">
                     <div class="p-2 bg-primary text-center"> <!-- Blue -->
                         <h1 class="font-light text-white">{{ $deb->name ?? 'N/A' }}</h1>
@@ -105,16 +105,8 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card card-hover">
-                    <div class="p-2 bg-primary text-center"> <!-- Red -->
-                        <h1 class="font-light text-white">{{ $pos->title ?? 'N/A' }}</h1>
-                        <h6 class="text-white">Position</h6>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-6">
                 <div class="card card-hover">
                     <div class="p-2 bg-primary text-center"> <!-- Green -->
                         <h1 class="font-light text-white">{{ $team_leader->first_name ?? 'N/A' }} {{ $team_leader->last_name ?? '' }}</h1>
@@ -129,14 +121,7 @@
                     <div class="card-body">
                         <div class="row">
 
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-primary text-center"> <!-- Blue -->
-                                            <h1 class="font-light text-white">{{ $projects }}</h1>
-                                            <h6 class="text-white">Total Projects</h6>
-                                        </div>
-                                    </div>
-                                </div>
+
 
                                 <div class="col-md-6 col-lg-3">
                                     <div class="card card-hover">
@@ -164,75 +149,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Ticket Metrics -->
-                            <div class="row mt-4">
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-primary text-center"> <!-- Light Blue -->
-                                            <h1 class="font-light text-white">{{ $tickets->count() }}</h1>
-                                            <h6 class="text-white">Total Tickets</h6>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-primary text-center"> <!-- Grey -->
-                                            <h1 class="font-light text-white">{{ $responded }}</h1>
-                                            <h6 class="text-white">Responded</h6>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-primary text-center"> <!-- Light Grey -->
-                                            <h1 class="font-light text-white">{{ $resolved }}</h1>
-                                            <h6 class="text-white">Resolved</h6>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-primary text-center"> <!-- Black -->
-                                            <h1 class="font-light text-white">{{ $pending }}</h1>
-                                            <h6 class="text-white">Pending</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Task Status Summary -->
-                            <div class="row mt-4">
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-danger text-center"> <!-- Yellow -->
-                                            <h1 class="font-light text-white">{{ $pendingTasks }}</h1>
-                                            <h6 class="text-white">Pending Tasks</h6>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-danger text-center"> <!-- Light Blue -->
-                                            <h1 class="font-light text-white">{{ $inProgressTasks }}</h1>
-                                            <h6 class="text-white">In Progress Tasks</h6>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="card card-hover">
-                                        <div class="p-2 bg-danger text-center"> <!-- Green -->
-                                            <h1 class="font-light text-white">{{ $completedTasks }}</h1>
-                                            <h6 class="text-white">Completed Tasks</h6>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="col-md-6 col-lg-3">
                                     <div class="card card-hover">

@@ -41,7 +41,7 @@ class HrController extends Controller
             $query->whereDate('check_in', $today);
         }])->get();
 
-        return view('hr.attendance', compact('employees'));
+        return view('admin.attendance', compact('employees'));
     }
 
     public function updatede(Request $request, $id)
@@ -467,7 +467,7 @@ public function edita($id)
     // Retrieve the attendance record
     $attendance = DailyInOut::findOrFail($id);
 
-    return view('hr.attendance_edit', compact('attendance'));
+    return view('admin.attendance_edit', compact('attendance'));
 }
 
 public function updatea(Request $request, $id)
@@ -493,7 +493,7 @@ public function showa($employeeId)
     $employee = Employee::with('dailyInOut')->findOrFail($employeeId);
 
     // Return the view with employee and attendance data
-    return view('hr.attendance_show', compact('employee'));
+    return view('admin.attendance_show', compact('employee'));
 }
 
 
@@ -503,7 +503,7 @@ public function showa($employeeId)
 public function editat($id)
 {
     $attendance = DailyInOut::findOrFail($id);
-    return view('hr.attendance_edit', compact('attendance'));
+    return view('admin.attendance_edit', compact('attendance'));
 }
 public function updateat(Request $request, $id)
 {
@@ -733,7 +733,7 @@ public function indexMeeting()
 public function indexreq()
 {
     $requests = Erequest::with('employee')->get();
-    return view('hr.requests', compact('requests'));
+    return view('admin.requests', compact('requests'));
 }
 // Update request status
 public function updateStatusreq(Request $request, $id)
@@ -895,48 +895,52 @@ public function updateStatus(Request $request, Task $task)
 
 
 
-
-
-public function report()
+public function report(Request $request)
 {
-    $employees = Employee::with('dailyInOuts')->get();
+    // Get the selected month from the request; default to the current month if not provided
+    $month = $request->get('month', now()->month);
+
+    // Get the name of the selected month to display in the report header
+    $selectedMonthName = date('F', mktime(0, 0, 0, $month, 10));
+
+
+
+    $employees = Employee::with(['dailyInOuts' => function ($query) use ($month) {
+        $query->whereMonth('created_at', $month); // Replace 'date' with 'created_at' or the correct column name
+    }])->get();
+
     $monthlyData = [];
 
     foreach ($employees as $employee) {
-        // Calculate total hours worked in the month
+        // Calculate total hours worked in the selected month
         $totalHours = $employee->dailyInOuts->sum(function ($record) {
             return $record->workedHours();
         });
 
-        // Calculate salary per hour
-        $salaryPerHour = $employee->salary / 160; // Assuming 160 hours in a month
+        // Calculate salary per hour and total salary for the month
+        $salaryPerHour = $employee->salary / 160;
         $totalSalary = $totalHours * $salaryPerHour;
 
-        // Deduct 7.5% from the total salary
+        // Deduct 7.25% from the total salary
         $deductionPercentage = 7.25;
-        $deductionAmount = ($employee->salary * $deductionPercentage) / 100;
-
+        $deductionAmount = ($totalSalary * $deductionPercentage) / 100;
         $adjustedSalary = $totalSalary - $deductionAmount;
 
-
-
-        $finalSalary = $adjustedSalary ;
-
         $monthlyData[] = [
-            'name' => $employee->first_name,
-            'namel' => $employee->last_name,
+            'name' => $employee->user->name,
             'department' => $employee->department->name ?? 'N/A',
             'total_hours' => $totalHours,
-            'salary_per_hour' => $salaryPerHour,
-            'total_salary' => $totalSalary,
-            'deduction_amount' => $deductionAmount,
-            'adjusted_salary' => $adjustedSalary,
-            'final_salary' => $finalSalary,
+            'salary_per_hour' => round($salaryPerHour, 2),
+            'total_salary' => round($totalSalary, 2),
+            'deduction_amount' => round($deductionAmount, 2),
+            'adjusted_salary' => round($adjustedSalary, 2),
+            'final_salary' => round($adjustedSalary, 2),
         ];
     }
 
-    return view('hr.reports', compact('monthlyData'));
+    return view('admin.reports', compact('monthlyData', 'selectedMonthName'));
 }
+
 
 
 
@@ -944,7 +948,7 @@ public function report()
 public function indexr()
 {
     $leaveRequests = LeaveRequest::with('employee.user')->get();
-    return view('hr.leave_requests', compact('leaveRequests'));
+    return view('admin.leave_requests', compact('leaveRequests'));
 }
 
 
@@ -952,7 +956,7 @@ public function indexr()
  public function creater()
  {
      $employees = Employee::all();
-     return view('hr.leave_requestsc', compact('employees'));
+     return view('admin.leave_requestsc', compact('employees'));
  }
 
  // Store a newly created leave request in the database
@@ -981,7 +985,7 @@ public function indexr()
 
     dd($leaveRequest);
 
-    return view('hr.leave_requestse', compact('leaveRequest', 'employees'));
+    return view('admin.leave_requestse', compact('leaveRequest', 'employees'));
 }
 
 

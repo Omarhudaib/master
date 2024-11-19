@@ -26,8 +26,7 @@
                                 <select name="team_leader_id" id="team_leader_id" class="form-control" required>
                                     @foreach($employees as $employee)
                                         <option value="{{ $employee->id }}" {{ $team->team_leader_id == $employee->id ? 'selected' : '' }}>
-                                            {{ $employee->first_name }} {{ $employee->last_name }}
-                                        </option>
+                                            {{ $employee->user->name }}
                                     @endforeach
                                 </select>
                             </div>

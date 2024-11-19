@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Employee extends Model
 {
     protected $fillable = [
-        'user_id', 'first_name', 'last_name', 'date_of_birth', 'hire_date',
-        'department_id', 'position_id', 'salary', 'national_id',
+        'user_id', 'date_of_birth', 'hire_date',
+        'department_id', 'salary', 'national_id',
         'marital_status', 'phone_number', 'employee_identifier',
         'sick_leaves', 'annual_vacation_days'
     ];

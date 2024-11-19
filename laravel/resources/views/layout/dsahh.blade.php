@@ -262,12 +262,7 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('reporth') }}" aria-expanded="false">
-                                <i class="fas fa-dollar-sign"></i> <!-- Salary Report Icon -->
-                                <span class="hide-menu">Salary Report</span>
-                            </a>
-                        </li>
+
 
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('postsh.index') }}" aria-expanded="false">
@@ -296,7 +291,12 @@
                                 <span class="hide-menu">Calendar</span>
                             </a>
                         </li>
-
+            <li class="sidebar-item">
+                            <a class="sidebar-link" href="{{ route('reporth') }}" aria-expanded="false">
+                                <i class="fas fa-dollar-sign"></i> <!-- Salary Report Icon -->
+                                <span class="hide-menu">Salary Report</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('hr.leave_requestsi') }}" aria-expanded="false">
                                 <i class="fas fa-file-alt"></i> <!-- Leave Requests Icon -->

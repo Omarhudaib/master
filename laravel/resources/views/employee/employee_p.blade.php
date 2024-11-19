@@ -1,10 +1,9 @@
 @if(auth()->user()->role_id == 1)
-    @include('layout.dsah') <!-- Dashboard for role ID 1 -->
+    @include('layout.dsaha') <!-- Dashboard for role ID 1 -->
 @elseif(auth()->user()->role_id == 2)
-    @include('layout.dsaha') <!-- Dashboard for role ID 2 -->
+    @include('layout.dsah') <!-- Dashboard for role ID 2 -->
 @elseif(auth()->user()->role_id == 3)
-    @include('layout.dsahh') <!-- Dashboard for role ID 3 -->
-@else
+   
     <p>Unauthorized access.</p> <!-- Fallback if no role matches -->
 @endif
 
@@ -29,21 +28,8 @@
                         @method('PUT')
 
                         <!-- Updatable Fields -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="first_name">First Name</label>
-                                    <input type="text" name="first_name" id="first_name" class="form-control" value="{{ $employee->first_name }}" required>
-                                </div>
-                            </div>
 
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="last_name">Last Name</label>
-                                    <input type="text" name="last_name" id="last_name" class="form-control" value="{{ $employee->last_name }}" required>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <div class="row">
                             <div class="col-md-6">
@@ -104,10 +90,7 @@
                                         <input type="text" id="department_id" class="form-control" value="{{ $employee->department->name }}" disabled>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="position_id">Position (Read Only)</label>
-                                        <input type="text" id="position_id" class="form-control" value="{{ $employee->position->title }}" disabled>
-                                    </div>
+
 
                                     <div class="form-group">
                                         <label for="salary">Salary (Read Only)</label>

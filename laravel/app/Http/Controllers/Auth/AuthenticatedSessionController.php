@@ -12,6 +12,9 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+
+
+    
     /**
      * Display the login view.
      */
@@ -28,9 +31,9 @@ class AuthenticatedSessionController extends Controller
     $user = Auth::user();
 
     // Check the user's role and redirect accordingly
-    if ($user->role_id == 1) {
+    if ($user->role_id == 2) {
         return redirect()->route('employee'); // Redirect to employee dashboard
-    } elseif ($user->role_id == 2) {
+    } elseif ($user->role_id == 1) {
         return redirect()->route('admin.index'); // Redirect to admin dashboard
     } elseif ($user->role_id == 3) {
         return redirect()->route('home_hr'); // Redirect to HR dashboard

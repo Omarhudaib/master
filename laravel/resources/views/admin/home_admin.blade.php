@@ -93,7 +93,7 @@
  <div class="container-fluid">
 
         <div class="row">
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-6">
                 <div class="card card-hover">
                     <div class="p-2 bg-primary text-center"> <!-- Blue -->
                         <h1 class="font-light text-white">{{ $deb->name ?? 'N/A' }}</h1>
@@ -102,16 +102,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card card-hover">
-                    <div class="p-2 bg-primary text-center"> <!-- Red -->
-                        <h1 class="font-light text-white">{{ $pos->title ?? 'N/A' }}</h1>
-                        <h6 class="text-white">Position</h6>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-6">
                 <div class="card card-hover">
                     <div class="p-2 bg-primary text-center"> <!-- Green -->
                         <h1 class="font-light text-white">{{ $team_leader->first_name ?? 'N/A' }} {{ $team_leader->last_name ?? '' }}</h1>
@@ -126,17 +117,13 @@
             <!-- Summary Cards -->
             @foreach ([
               ['Total Employees', $totalEmployees, 'bg-primary'], // Blue
-    ['Total Projects', $totalProjects, 'bg-primary'], // Green
-    ['Total Tasks', $totalTasks, 'bg-primary'], // Yellow
+
     ['Total Departments', $totalDepartments, 'bg-primary'], // Light Blue
     ['Leave Requests', $totalLeaveRequests, 'bg-danger'], // Red
-    ['Active Projects', $activeProjects, 'bg-danger'], // Dark
-    ['Done Projects', $doneProjects, 'bg-danger'], // Gray
-    ['Planned Projects', $plannedProjects, 'bg-danger'], // Light Gray
+
     ['Total Check-Ins', $totalCheckIns, 'bg-primary'], // Purple
-    ['Pending Tasks', $pendingTasks, 'bg-primary'], // Orange
-    ['Meetings', $meetings, 'bg-primary'], // Teal
-    ['Pending Tickets', $pendingTicket, 'bg-primary'], // Pink
+
+
             ] as [$title, $count, $bgClass])
                 <div class="col-md-3 mt-3">
                     <div class="card card-hover">
@@ -148,36 +135,7 @@
                 </div>
             @endforeach
         </div>
-<!-- Teams Section -->
-<div class="row mt-4">
-    <div class="col-md-12">
-        <h2>Teams</h2>
-   <div class="table-responsive">
-        <table class="table table-hover table-warning">
-            <thead class="bg-danger text-white">
-                    <tr>
-                        <th>Team Name</th>
 
-                        <th>Project Name</th>
-                        <th>End Date</th>
-                        <th>Employees</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($teams as $team)
-                        <tr>
-                            <td>{{ $team->name }}</td>
-
-                            <td>{{ $team->projects->isNotEmpty() ? $team->projects->first()->name : 'No projects' }}</td>
-                            <td>{{ $team->projects->isNotEmpty() ? $team->projects->first()->end_date: 'N/A' }}</td>
-                            <td>{{ $team->employees->isNotEmpty() ? $team->employees->count() : 'No employees' }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
- </div>
     <!-- Posts Section -->
     <div class="col-md-12">
         <h2>Recent Posts</h2>

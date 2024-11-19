@@ -24,16 +24,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <select name="position_id" class="form-control">
-                                <option value="">Select Position</option>
-                                @foreach($positions as $position)
-                                    <option value="{{ $position->id }}" {{ request('position_id') == $position->id ? 'selected' : '' }}>
-                                        {{ $position->title }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
 
                     <button type="submit" class="btn btn-primary ml-3">Search</button>
                </div>  </form>

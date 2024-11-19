@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
 
 
         // Define the role_id (ensure this ID exists in the roles table)
-        $role_id = 4;
+        $role_id = 2;
 
         // Check if the role exists
         if (!Role::find($role_id)) {
@@ -68,7 +68,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
 
-  return redirect('career');
+  return redirect('employee');
 
     }
 

@@ -105,74 +105,67 @@ public function updateStatusreq(Request $request, $id)
         {
             // Fetch totals for the dashboard
             $totalEmployees = Employee::count();
-            $totalProjects = Project::count();
-            $totalTasks = Task::count();
             $totalDepartments = Department::count();
             $totalLeaveRequests = LeaveRequest::count();
-            $totalCheckIns = DailyInOut::whereNotNull('check_in')->count(); // Count only the records with a check-in
-            $pendingTasks = Task::where('status', 'Pending')->count(); // Count only the pending tasks
-            $pendingTicket = Ticket::where('status', 'Pending')->count();
-            // Fetch the authenticated employee ID
-            $employeeId = auth()->user()->employee->id;
-            $employee = auth()->user()->employee;
-            // Get the latest check-in record
-            $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
-                                        ->orderBy('check_in', 'desc')
-                                        ->first();
-                                        $pos = Position::find($employee->position_id);  // Get the position name  // Get the position name
-                                        $deb = Department::find($employee->department_id);  // Get the department name
+            $totalCheckIns = DailyInOut::whereNotNull('check_in')->count();
 
-                                        // Get the first team associated with the employee
-                                        $team = $employee->teams()->first();
-                                        $team_leader = $team ? $team->teamLeader : null;
-            // Determine if the user can check in or check out
-            $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
-            $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
+            // Initialize variables
+            $latestCheckIn = null;
+            $canCheckIn = false;
+            $canCheckOut = false;
+            $team_leader = null;
+            $deb = null;
+
+            // Check if the user has an associated employee record
+            $employee = auth()->user()->employee;
+            if ($employee) {
+                $employeeId = $employee->id;
+
+                // Get the latest check-in record
+                $latestCheckIn = DailyInOut::where('employee_id', $employeeId)
+                                            ->orderBy('check_in', 'desc')
+                                            ->first();
+
+                // Get the department
+                $deb = Department::find($employee->department_id);
+
+                // Get the first team associated with the employee
+                $team = $employee->teams()->first();
+                $team_leader = $team ? $team->teamLeader : null;
+
+                // Determine if the user can check in or check out
+                $canCheckIn = is_null($latestCheckIn) || $latestCheckIn->check_out;
+                $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
+            }
 
             // Fetch data with pagination
             $employees = Employee::paginate(20);
-            $tasks = Task::paginate(20);
             $departments = Department::paginate(20);
-            $positions = Position::paginate(20);
             $leaveRequests = LeaveRequest::paginate(20);
             $dailyInOuts = DailyInOut::paginate(20);
-            $teams = Team::with(['leader', 'projects', 'employees'])->get();
+            $teams = Team::with(['leader',  'employees'])->get();
+            $posts = Post::latest()->paginate(5);
 
-            // Fetch active projects (for example, those not completed)
-            $plannedProjects = Project::where('status', 'Planned')->count(); // Adjust the condition as per your logic
-            $activeProjects = Project::where('status', 'In Progress')->count();
-            $doneProjects = Project::where('status', 'Completed')->count();
-            // Fetch the latest posts
-            $posts = Post::latest()->paginate(5); // Fetch the latest 5 posts
-            $meetings = Meeting::where('meeting_date', '>', now())->count();
             // Pass totals and other necessary data to the view
             return view('admin.home_admin', compact(
                 'latestCheckIn',
                 'canCheckIn',
                 'canCheckOut',
                 'employees',
-                'doneProjects',
-                'plannedProjects',
-                'pendingTicket',
-                'tasks',
                 'teams',
                 'departments',
-                'positions',
                 'leaveRequests',
                 'dailyInOuts',
                 'totalEmployees',
-                'totalProjects',
-                'totalTasks',
                 'totalDepartments',
                 'totalLeaveRequests',
                 'totalCheckIns',
-                'activeProjects',
-                'pendingTasks',
                 'posts',
-                'meetings', 'pos' ,'team_leader','deb'
-                 // Add posts to the data being passed to the view
+                'team_leader',
+                'deb'
             ));
         }
+
 
 
         public function indexpost()
@@ -241,7 +234,7 @@ public function updateStatusreq(Request $request, $id)
 
         public function showall(Request $request)
         {
-            $query = Employee::with(['department', 'position', 'user', 'user.role', 'teams']);
+            $query = Employee::with(['department','position', 'user', 'user.role', 'teams']);
 
             // Search by name or email
             if ($request->filled('search')) {
@@ -256,19 +249,14 @@ public function updateStatusreq(Request $request, $id)
                 $query->where('department_id', $request->department_id);
             }
 
-            // Filter by position
-            if ($request->filled('position_id')) {
-                $query->where('position_id', $request->position_id);
-            }
-
             // Pagination
             $employees = $query->paginate(20);
             $roles = Role::all();
             $departments = Department::all();
-            $positions = Position::all();
+
             $teams = Team::all();
 
-            return view('admin.employees', compact('employees', 'roles', 'departments', 'positions', 'teams'));
+            return view('admin.employees', compact('employees', 'roles', 'departments',  'teams'));
         }
 
 public function showemployee()
@@ -277,45 +265,43 @@ public function showemployee()
     $users = User::whereDoesntHave('employee')->get();
 
     // Retrieve all employees along with related department, position, user, and teams
-    $employees = Employee::with(['department', 'position', 'user', 'user.role', 'teams'])->get();
+    $employees = Employee::with(['department',  'user', 'user.role', 'teams'])->get();
     $roles = Role::all();
     $departments = Department::all();
-    $positions = Position::all();
+
     $teams = Team::all();
 
     // Return the view with the employee data
-    return view('admin.employees_add', compact('employees', 'users', 'roles', 'departments', 'positions', 'teams'));
+    return view('admin.employees_add', compact('employees', 'users', 'roles', 'departments',  'teams'));
 }
-
-
 public function store(Request $request)
 {
+    // Validate the incoming request data
     $data = $request->validate([
         'user_id' => 'required|exists:users,id',
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
+        'name' => 'required|string|max:255',
         'date_of_birth' => 'nullable|date',
         'hire_date' => 'nullable|date',
         'department_id' => 'nullable|exists:departments,id',
-        'position_id' => 'nullable|exists:positions,id',
         'salary' => 'nullable|numeric',
+        'national_id' => 'nullable|string|max:255',
+        'marital_status' => 'nullable|in:single,married',
+        'phone_number' => 'nullable|string|max:20',
+        'employee_identifier' => 'nullable|string|max:255',
+        'sick_leaves' => 'nullable|integer',
+        'annual_vacation_days' => 'nullable|integer',
     ]);
 
+    // Check data and debug it
+
+
+    // If validation passes, create the employee
     $employee = Employee::create($data);
 
-    // Handle Employee Relations
-    if ($request->has('related_employee_id')) {
-        foreach ($request->related_employee_id as $index => $related_employee_id) {
-            EmployeeRelation::create([
-                'employee_id' => $employee->id,
-                'related_employee_id' => $related_employee_id,
-                'relation_type' => $request->relation_type[$index],
-            ]);
-        }
-    }
-
+    // Redirect with a success message
     return redirect()->route('employees')->with('success', 'Employee created successfully.');
 }
+
 
 
 
@@ -328,65 +314,78 @@ public function store(Request $request)
         $user = $employee->user;
         $roles = Role::all();
         $departments = Department::all();
-        $positions = Position::all();
+
         $teams = Team::all();
 
-        return view('admin.employees_edit', compact('employee', 'user', 'roles', 'departments', 'positions', 'teams'));
+        return view('admin.employees_edit', compact('employee', 'user', 'roles', 'departments',  'teams'));
     }
 
 public function show($id)
 {
-    $employee = Employee::with(['user.role', 'department', 'position', 'teams'])->findOrFail($id);
+    $employee = Employee::with(['user.role', 'department',  'teams'])->findOrFail($id);
     return view('admin.employees_show', compact('employee'));
 }
 public function update(Request $request, $id)
 {
     // Retrieve the employee and associated user
-    $employee = Employee::findOrFail($id);
-    $user = $employee->user;
+$employee = Employee::findOrFail($id);  // Find the employee by the given ID
+$user = $employee->user;  // Get the associated user from the employee
 
-    // Validate the request data
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id . '|max:255',
-        'password' => 'nullable|string|min:8',
-        'role_id' => 'required|exists:roles,id',
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'department_id' => 'nullable|exists:departments,id',
-        'position_id' => 'nullable|exists:positions,id',
-        'team_id' => 'nullable|exists:teams,id',
-        'salary' => 'nullable|numeric',
-        'date_of_birth' => 'nullable|date',
-        'hire_date' => 'nullable|date',
-    ]);
+// Validate the request data
+$validated = $request->validate([
+    'name' => 'required|string|max:255',
+    'email' => 'required|email',
+    'password' => 'nullable|string|min:8',
+    'role_id' => 'required|exists:roles,id',
 
-    // Update user information
+    'name' => 'required|string|max:255',
+    'department_id' => 'nullable|exists:departments,id',
+
+    'team_id' => 'nullable|exists:teams,id',
+    'salary' => 'nullable|numeric',
+    'date_of_birth' => 'nullable|date',
+    'hire_date' => 'nullable|date',
+    'national_id' => 'nullable|string|max:255',
+    'marital_status' => 'nullable|in:single,married',
+    'phone_number' => 'nullable|string|max:20',
+    'employee_identifier' => 'nullable|string|max:255',
+    'sick_leaves' => 'nullable|integer',
+    'annual_vacation_days' => 'nullable|integer',
+]);
+
+// Update user information
+$user->update([
+    'name' => $validated['name'],
+    'email' => $validated['email'],
+    'role_id' => $validated['role_id'],
+    'username' => strtolower(str_replace(' ', '_', $validated['name'])),
+]);
+
+// Update password if provided
+if (!empty($validated['password'])) {
     $user->update([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'role_id' => $validated['role_id'],
-        'username' => strtolower(str_replace(' ', '_', $validated['name'])),
+        'password' => bcrypt($validated['password']),
     ]);
+}
 
-    // Update password if provided
-    if (!empty($validated['password'])) {
-        $user->update([
-            'password' => bcrypt($validated['password']),
-        ]);
-    }
+// Update employee information
+$employee->update([
+    'name' => $validated['name'],
 
-    // Update employee information
-    $employee->update([
-        'first_name' => $validated['first_name'],
-        'last_name' => $validated['last_name'],
-        'department_id' => $validated['department_id'],
-        'position_id' => $validated['position_id'],
-        'team_id' => $validated['team_id'],
-        'salary' => $validated['salary'],
-        'date_of_birth' => $validated['date_of_birth'],
-        'hire_date' => $validated['hire_date'],
-    ]);
+    'department_id' => $validated['department_id'],
+
+    'team_id' => $validated['team_id'],
+    'salary' => $validated['salary'],
+    'date_of_birth' => $validated['date_of_birth'],
+    'hire_date' => $validated['hire_date'],
+    'national_id' => $validated['national_id'],
+    'marital_status' => $validated['marital_status'],
+    'phone_number' => $validated['phone_number'],
+    'employee_identifier' => $validated['employee_identifier'],
+    'sick_leaves' => $validated['sick_leaves'],
+    'annual_vacation_days' => $validated['annual_vacation_days'],
+]);
+
 
     return redirect()->route('employees')->with('success', 'Employee updated successfully.');
 }
@@ -885,33 +884,21 @@ public function updatedepartments(Request $request, $id)
     // Update department details
     $department->name = $request->input('name');
     $department->description = $request->input('description');
-
-    // Get the associated location (assuming a hasOne or belongsTo relationship)
-    $location = $department->location;
-
-    if ($location) {
-        // Update existing location
-        $location->name = $request->input('location_name');
-        $location->latitude = $request->input('latitude');
-        $location->longitude = $request->input('longitude');
-        $location->save(); // Save the location instance
-    } else {
-        // Create a new location if none exists
-        $newLocation = new Location();
-        $newLocation->name = $request->input('location_name');
-        $newLocation->latitude = $request->input('latitude');
-        $newLocation->longitude = $request->input('longitude');
-        $newLocation->department_id = $department->id; // Link the new location to the department
-        $newLocation->save(); // Save the new location instance
-    }
-
-    // Save the updated department instance
     $department->save();
 
-    // Redirect back with a success message
-    return redirect()->route('departments.index')->with('success', 'Department updated successfully');
-}
+    // Use updateOrCreate to either update or create a new location
+    $department->location()->updateOrCreate(
+        ['department_id' => $department->id], // Match by department ID
+        [
+            'name' => $request->input('location_name'),
+            'latitude' => $request->input('latitude'),
+            'longitude' => $request->input('longitude')
+        ]
+    );
 
+    // Redirect back with a success message
+    return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
+}
 
 
 
@@ -1137,50 +1124,49 @@ public function checkOut(Request $request)
 
 
 
-
-
-
-
-public function report()
+public function report(Request $request)
 {
-    $employees = Employee::with('dailyInOuts')->get();
+    $month = $request->input('month'); // Get the selected month from the request
+
+    // Set the selected month name, default to 'All Months' if no month is selected
+    $selectedMonthName = $month ? date('F', mktime(0, 0, 0, $month, 1)) : 'All Months';
+
+    $employees = Employee::with(['dailyInOuts' => function ($query) use ($month) {
+        if ($month) {
+            $query->whereMonth('created_at', $month); // Use the column name 'date'
+        }
+    }])->get();
+
     $monthlyData = [];
 
     foreach ($employees as $employee) {
-        // Calculate total hours worked in the month
+        // Calculate total hours worked in the selected month
         $totalHours = $employee->dailyInOuts->sum(function ($record) {
             return $record->workedHours();
         });
 
-        // Calculate salary per hour
-        $salaryPerHour = $employee->salary / 160; // Assuming 160 hours in a month
+        // Salary calculations
+        $salaryPerHour = $employee->salary / 160;
         $totalSalary = $totalHours * $salaryPerHour;
-
-        // Deduct 7.5% from the total salary
         $deductionPercentage = 7.25;
-        $deductionAmount = ($employee->salary * $deductionPercentage) / 100;
-
+        $deductionAmount = ($totalSalary * $deductionPercentage) / 100;
         $adjustedSalary = $totalSalary - $deductionAmount;
 
-
-
-        $finalSalary = $adjustedSalary ;
-
         $monthlyData[] = [
-            'name' => $employee->first_name,
-            'namel' => $employee->last_name,
+            'name' => $employee->user->name,
             'department' => $employee->department->name ?? 'N/A',
             'total_hours' => $totalHours,
-            'salary_per_hour' => $salaryPerHour,
-            'total_salary' => $totalSalary,
-            'deduction_amount' => $deductionAmount,
-            'adjusted_salary' => $adjustedSalary,
-            'final_salary' => $finalSalary,
+            'salary_per_hour' => round($salaryPerHour, 2),
+            'total_salary' => round($totalSalary, 2),
+            'deduction_amount' => round($deductionAmount, 2),
+            'adjusted_salary' => round($adjustedSalary, 2),
+            'final_salary' => round($adjustedSalary, 2),
         ];
     }
 
-    return view('admin.reports', compact('monthlyData'));
+    return view('admin.reports', compact('monthlyData', 'selectedMonthName'));
 }
+
 
 
 

@@ -34,17 +34,18 @@
             </div>
         </div>
 
+
         <!-- Create Leave Request Form Section -->
         <div class="container mt-5">
             <h1 class="mb-4">Create Leave Request</h1>
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('leave_requests_create') }}" method="POST">
+                    <form action="{{ route('leave_requests_create') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="employee_id">Employee</label>
                             <input type="hidden" name="employee_id" id="employee_id" value="{{ auth()->user()->employee->id }}">
-                            <input type="text" class="form-control" value="{{ auth()->user()->employee->first_name }}" readonly>
+                            <input type="text" class="form-control" value="{{ auth()->user()->employee->user->name }}" readonly>
                         </div>
                         <div class="form-group">
                             <label for="leave_type">Leave Type</label>
@@ -64,11 +65,14 @@
                             <label for="end_date">End Date</label>
                             <input type="date" name="end_date" id="end_date" class="form-control">
                         </div>
+                        <div class="form-group">
+                            <label for="attachment">Upload Attachment (optional)</label>
+                            <input type="file" name="attachment" id="attachment" class="form-control-file">
+                        </div>
                         <button type="submit" class="btn btn-primary btn-block">Submit</button>
+
                     </form>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-@include('layout.Footer')
+        @include('layout.Footer')

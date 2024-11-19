@@ -14,6 +14,11 @@ class LeaveRequest extends Model
         'start_date',
         'end_date',
         'status',
+        'path', // Ensure path is fillable as a string, not as a datetime
+    ];
+
+    protected $casts = [
+        // Make sure 'path' is not being cast as 'datetime'
     ];
 
 public function employee()

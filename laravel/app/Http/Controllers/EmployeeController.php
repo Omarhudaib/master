@@ -7,7 +7,7 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use App\Models\Message;
-use App\Models\Position;
+
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Task;
@@ -23,8 +23,20 @@ class EmployeeController extends Controller
 {
     public function indexEmployee()
     {
+
+
+            // Get the authenticated user
+    $user = Auth::user();
+
+    // Check if the authenticated user has an associated employee record
+    if (!$user->employee) {
+        // If not, log the user out and redirect them to the login page
+        Auth::logout();
+        return redirect()->route('login')->with('error', 'You are not an employee. Please log in again.');
+    }
         // Get the authenticated user's employee record
         $employee = Auth::user()->employee;
+
 
         // Get teams related to the authenticated employee
         // Here, we're using 'with' to load the team leader for each team.
@@ -36,7 +48,7 @@ class EmployeeController extends Controller
                                     ->first();
 
         // Get the position and department names
-        $pos = Position::find($employee->position_id);  // Get the position name
+     // Get the position name
         $deb = Department::find($employee->department_id);  // Get the department name
 
         // Get the first team associated with the employee
@@ -48,31 +60,14 @@ class EmployeeController extends Controller
         $canCheckOut = !$canCheckIn && now()->diffInHours($latestCheckIn->check_in) >= 9;
 
         // Retrieve tasks and tickets related to the authenticated employee
-        $tasks = Task::whereHas('employee', function ($query) use ($employee) {
-            $query->where('user_id', Auth::id());
-        })->get();
 
-        $tickets = Ticket::whereHas('employee', function ($query) use ($employee) {
-            $query->where('user_id', Auth::id());
-        })->get();
 
         // Count leave requests for the employee
         $leaveRequests = LeaveRequest::where('employee_id', $employee->id)->count();
 
-        // Count responded, resolved, and pending tickets
-        $responded = $tickets->where('status', 'Responded')->count();
-        $resolved = $tickets->where('status', 'Resolved')->count();
-        $pending = $tickets->where('status', 'Pending')->count();
-
-        // Count pending, in-progress, and completed tasks
-        $pendingTasks = $tasks->where('status', 'Pending')->count();
-        $inProgressTasks = $tasks->where('status', 'In Progress')->count();
-        $completedTasks = $tasks->where('status', 'Completed')->count();
 
         // Retrieve the count of projects related to the employee
-        $projects = Project::whereHas('team.employees', function ($query) use ($employee) {
-            $query->where('employees.id', $employee->id); // Specify 'employees.id'
-        })->count();
+
 
         // Get vacation days and sick leave from the employee record
         $annual_vacation_days = $employee->annual_vacation_days;
@@ -85,18 +80,9 @@ class EmployeeController extends Controller
             'latestCheckIn',
             'canCheckIn',
             'canCheckOut',
-            'tasks',
-            'tickets',
-            'responded',
-            'resolved',
-            'pending',
-            'pendingTasks',
-            'inProgressTasks',
-            'completedTasks',
-            'projects',
             'annual_vacation_days',
             'sick_vacation',
-            'pos',
+
             'deb',
             'team_leader'
         ));
@@ -170,8 +156,8 @@ public function update(Request $request, $id)
 
     // Validate the request
     $request->validate([
-        'first_name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
+
+
         'date_of_birth' => 'required|date',
         'national_id' => 'required|string|max:255',
         'marital_status' => 'required|string|in:single,married',
@@ -183,8 +169,8 @@ public function update(Request $request, $id)
 
     // Update only the allowed fields
     $employee->update([
-        'first_name' => $request->input('first_name'),
-        'last_name' => $request->input('last_name'),
+
+
         'date_of_birth' => $request->input('date_of_birth'),
         'national_id' => $request->input('national_id'),
         'marital_status' => $request->input('marital_status'),
@@ -309,29 +295,32 @@ public function updateStatusti(Request $request, $id)
     return redirect()->back()->with('success', 'Ticket status updated successfully.');
 }
 
+// Store a newly created leave request in the database
+public function storer(Request $request)
+{
+    // Validate the request data
+    $validatedData = $request->validate([
+        'employee_id' => 'required|exists:employees,id',
+        'leave_type' => 'required|in:Sick,Vacation,Maternity,Paternity,Unpaid',
+        'start_date' => 'required|date',
+        'end_date' => 'nullable|date|after_or_equal:start_date',
+        'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5000', // Use 'attachment' here
+    ]);
 
- // Store a newly created leave request in the database
- public function storer(Request $request)
- {
-     $validatedData = $request->validate([
-         'employee_id' => 'required|exists:employees,id',
-         'leave_type' => 'required|in:Sick,Vacation,Maternity,Paternity,Unpaid',
-         'start_date' => 'required|date',
-         'end_date' => 'nullable|date|after_or_equal:start_date',
-     ]);
+    $validatedData['status'] = 'Pending'; // Set default status
 
-     $validatedData['status'] = 'Pending'; // Set default status
+    // Handle file upload if a file is present
+    if ($request->hasFile('attachment')) {
+        // Store the file and manually set the 'path' attribute
+        $validatedData['path'] = $request->file('attachment')->store('leave_requests', 'public');
+    }
 
-     LeaveRequest::create($validatedData);
+    // Create the leave request with validated data
+    LeaveRequest::create($validatedData);
 
-     return redirect()->route('leave_requests_index')->with('success', 'Leave request created successfully.');
- }
- public function indexposts()
- {
-     $posts = Post::with('user')->paginate(10);
-// Fetch the messages
-     return view('employee.posts', compact('posts',)); // Pass both posts and messages
- }
+    return redirect()->route('leave_requests_index')->with('success', 'Leave request created successfully.');
+}
+
  public function indexre()
  {
      // Get the authenticated employee's ID
@@ -346,6 +335,13 @@ public function updateStatusti(Request $request, $id)
      return view('employee.leave_requestsc', compact('leaveRequests'));
  }
 
+
+ public function indexposts()
+ {
+     $posts = Post::with('user')->paginate(10);
+// Fetch the messages
+     return view('employee.posts', compact('posts',)); // Pass both posts and messages
+ }
 
 
 public function indexe($employeeId)

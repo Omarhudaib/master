@@ -96,86 +96,9 @@
                     <!-- toggle and nav items -->
                     <!-- ============================================================== -->
                     <ul class="navbar-nav float-left mr-auto ml-3 pl-1">
-                        @php
-                        // Fetch the authenticated user's employee ID
-                        $employeeId = auth()->user()->employee->id;
 
-                        // Fetch all pending tasks for the authenticated user's employee ID
-                        $pendingTasks = \App\Models\Task::where('employee_id', $employeeId)
-                            ->where('status', 'Pending')
-                            ->get()->map(function ($task) {
-                                return (object)[
-                                    'type' => 'task',
-                                    'description' => $task->description,
-                                    'created_at' => $task->created_at,
-                                    'title' => $task->title // You can also include the title if needed
-                                ];
-                            });
-
-                        // Fetch all open tickets for the authenticated user's employee ID
-                        $pendingTickets = \App\Models\Ticket::where('employee_id', $employeeId)
-                            ->where('status', 'Open')
-                            ->get()->map(function ($ticket) {
-                                return (object)[
-                                    'type' => 'ticket',
-                                    'description' => $ticket->description,
-                                    'created_at' => $ticket->created_at,
-                                    'title' => $ticket->subject // Assuming 'subject' is what you want for tickets
-                                ];
-                            });
-
-                        // Fetch approved leave requests for the authenticated user's employee ID
-                        $pendingRequests = \App\Models\LeaveRequest::where('employee_id', $employeeId)
-                            ->where('status', 'Approved')
-                            ->get()->map(function ($request) {
-                                return (object)[
-                                    'type' => 'leave_request',
-                                    'description' => "Leave from {$request->start_date} to {$request->end_date}", // Example description
-                                    'created_at' => $request->created_at,
-                                    'title' => 'Leave Request' // You can set a static title or customize
-                                ];
-                            });
-
-                        // Merge all notifications into one collection
-                        $pendingNotifications = collect([])->merge($pendingTasks)->merge($pendingTickets)->merge($pendingRequests);
-                        @endphp
 
                         <!-- Notification -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle pl-md-3 position-relative" href="javascript:void(0)"
-                               id="bell" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span><i data-feather="bell" class="svg-icon"></i></span>
-                                <span class="badge badge-pill badge-primary notify-no position-absolute"
-                                      style="top: 8px; right: 8px; font-size: 0.8rem;">
-                                    {{ $pendingNotifications->count() }}
-                                </span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-left mailbox animated bounceInDown p-0"
-                                 style="min-width: 300px; border-radius: 8px;">
-                                <ul class="list-style-none mb-0">
-                                    <li>
-                                        <div class="message-center notifications position-relative py-2">
-                                            @forelse ($pendingNotifications as $notification)
-                                                <a href="javascript:void(0)" class="message-item d-flex align-items-center border-bottom px-3 py-2"
-                                                   style="text-decoration: none;">
-                                                    <div class="btn btn-warning btn-circle mr-2">
-                                                        <i data-feather="alert-circle" class="text-white"></i>
-                                                    </div>
-                                                    <div class="w-75 d-inline-block v-middle pl-2">
-                                                        <h6 class="message-title mb-0 mt-1 text-dark">
-                                                            {{ $notification->description }}
-                                                        </h6>
-                                                        <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
-                                                    </div>
-                                                </a>
-                                            @empty
-                                                <div class="text-center py-3 text-muted">No pending notifications</div>
-                                            @endforelse
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
 
 
 
@@ -246,32 +169,9 @@
                                 <span class="hide-menu">All Post</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('ticket_list') }}" aria-expanded="false">
-                                <i data-feather="tag" class="feather-icon"></i>
-                                <span class="hide-menu">Ticket List</span>
-                            </a>
-                        </li>
-                        @php
-                        $employee = auth()->user()->employee;
-                    @endphp
-
-                    @if($employee->teams_leader()->where('team_leader_id', $employee->id)->exists())
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('taskse.index') }}" aria-expanded="false">
-                                <i data-feather="check-square" class="feather-icon"></i>
-                                <span class="hide-menu">Create Task</span>
-                            </a>
-                        </li>
-                    @endif
 
 
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="{{ route('task_list') }}" aria-expanded="false">
-                                <i data-feather="list" class="feather-icon"></i> <!-- Updated icon -->
-                                <span class="hide-menu">Tasks List</span>
-                            </a>
-                        </li>
+
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('employee_p.edit', ['id' => auth()->id()]) }}" aria-expanded="false">
                                 <i data-feather="edit" class="feather-icon"></i> <!-- Updated icon -->
